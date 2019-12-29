@@ -22,35 +22,35 @@ E-mail subscribers is a simple addon for Wordpress to manage e-mail subscription
 Note that this addon is still in early beta. If you encounter a bug, please report it.
 
 ### Supported shortcodes:
-・sitename
-  The name of your site defined in WordPress settings
-・siteurl
-  The URL to your site defined in WordPress settings
-・sitedescription
-  Site description defined in WordPress settings
-・subscribername
-  Name of the subscriber
-・subscriberemail
-  The e-mail to the subscriber
-・unsubscribelink
-  A link to the unsubscribe page to let the user unsubscribe from your list
-・verifylink
-  A link to the verification page to let the user verify the e-mail provided
-・newposts
-  The number of new posts since last successful send
-・postedby
-  The WordPress user that posted the content
-・postimage
-  Image link to post featured image (just the link, not enclosed by img tags).
-・postlink
-  Link to the post itself
-・postdate
-  Date the post was published
-・postcontent
-  The full post content
-・postexcerpt
-  A trimmed-down version of the full post
-・posttitle
-  Title of the post
-・loopstart / loopend
-  This is the content loop. If there is more than one post, this loop will go thru every new post and insert the content for each post between this shortcodes. Insde the loop you can define how to display the content itself. All post* shortcodes are only valid inside this loop. If no loop shortcodes are defined, only the last post will be inserted.
+・sitename<br>
+  The name of your site defined in WordPress settings<br>
+・siteurl<br>
+  The URL to your site defined in WordPress settings<br>
+・sitedescription<br>
+  Site description defined in WordPress settings<br>
+・subscribername<br>
+  Name of the subscriber<br>
+・subscriberemail<br>
+  The e-mail to the subscriber<br>
+・unsubscribelink<br>
+  A link to the unsubscribe page to let the user unsubscribe from your list<br>
+・verifylink<br>
+  A link to the verification page to let the user verify the e-mail provided<br>
+・newposts<br>
+  The number of new posts since last successful send<br>
+・postedby<br>
+  The WordPress user that posted the content<br>
+・postimage<br>
+  Image link to post featured image (just the link, not enclosed by img tags)<br>
+・postlink<br>
+  Link to the post itself<br>
+・postdate<br>
+  Date the post was published<br>
+・postcontent<br>
+  The full post content<br>
+・postexcerpt<br>
+  A trimmed-down version of the full post<br>
+・posttitle<br>
+  Title of the post<br>
+・loopstart / loopend<br>
+  This is the content loop. If there is more than one post, this loop will go thru every new post and insert the content for each post between this shortcodes. Insde the loop you can define how to display the content itself. All post* shortcodes are only valid inside this loop. If no loop shortcodes are defined, only the last post will be inserted.<br>
