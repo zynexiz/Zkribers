@@ -22,35 +22,69 @@ E-mail subscribers is a simple addon for Wordpress to manage e-mail subscription
 Note that this addon is still in early beta. If you encounter a bug, please report it.
 
 ### Supported shortcodes:
-・sitename<br>
-  The name of your site defined in WordPress settings<br>
-・siteurl<br>
-  The URL to your site defined in WordPress settings<br>
-・sitedescription<br>
-  Site description defined in WordPress settings<br>
-・subscribername<br>
-  Name of the subscriber<br>
-・subscriberemail<br>
-  The e-mail to the subscriber<br>
-・unsubscribelink<br>
-  A link to the unsubscribe page to let the user unsubscribe from your list<br>
-・verifylink<br>
-  A link to the verification page to let the user verify the e-mail provided<br>
-・newposts<br>
-  The number of new posts since last successful send<br>
-・postedby<br>
-  The WordPress user that posted the content<br>
-・postimage<br>
-  Image link to post featured image (just the link, not enclosed by img tags)<br>
-・postlink<br>
-  Link to the post itself<br>
-・postdate<br>
-  Date the post was published<br>
-・postcontent<br>
-  The full post content<br>
-・postexcerpt<br>
-  A trimmed-down version of the full post<br>
-・posttitle<br>
-  Title of the post<br>
-・loopstart / loopend<br>
-  This is the content loop. If there is more than one post, this loop will go thru every new post and insert the content for each post between this shortcodes. Insde the loop you can define how to display the content itself. All post* shortcodes are only valid inside this loop. If no loop shortcodes are defined, only the last post will be inserted.<br>
+<table>
+  <tr>
+    <td>sitename</td>
+    <td>The name of your site defined in WordPress settings</td>
+  </tr>
+  <tr>
+      <td>siteurl</td>
+      <td>The URL to your site defined in WordPress settings</td>
+  </tr>
+  <tr>
+      <td>sitedescription</td>
+      <td>Site description defined in WordPress settings</td>
+  </tr>
+  <tr>
+      <td>subscribername</td>
+      <td>Name of the subscriber</td>
+  </tr>
+  <tr>
+      <td>subscriberemail</td>
+      <td>The e-mail to the subscriber</td>
+  </tr>
+  <tr>
+      <td>unsubscribelink</td>
+      <td>A link to the unsubscribe page to let the user unsubscribe from your list</td>
+  </tr>
+  <tr>
+      <td>verifylink</td>
+      <td>A link to the verification page to let the user verify the e-mail provided</td>
+  </tr>
+	<tr>
+      <td>newposts</td>
+      <td>The number of new posts since last successful send</td>
+  </tr>
+	<tr>
+      <td>postedby</td>
+      <td>The WordPress user that posted the content</td>
+  </tr>
+	<tr>
+      <td>postimage</td>
+      <td>Image link to post featured image (just the link, not enclosed by img tags)</td>
+  </tr>
+	<tr>
+      <td>postlink</td>
+      <td>Link to the post itself</td>
+  </tr>
+	<tr>
+		<td>postdate</td>
+		<td>Date the post was published</td>
+	</tr>
+	<tr>
+		<td>postcontent</td>
+		<td>The full post content</td>
+	</tr>
+	<tr>
+    <td>postexcerpt</td>
+    <td>A trimmed-down version of the full post</td>
+  </tr>
+	<tr>
+    <td>posttitle</td>
+    <td>Title of the post</td>
+  </tr>
+	<tr>
+    <td>loopstart / loopend</td>
+    <td>This is the content loop. If there is more than one post, this loop will go thru every new post and insert the content for each post between this shortcodes. Insde the loop you can define how to display the content itself. All post* shortcodes are only valid inside this loop. If no loop shortcodes are defined, only the last post will be inserted.</td>
+  </tr>
+</table>
