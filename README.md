@@ -16,7 +16,8 @@ E-mail subscribers is a simple addon for Wordpress to manage e-mail subscription
 ・Better security for storing authentication password in database<br>
 ・Add better looking verify/unsubscribe pages<br>
 ・Add internationalization<br>
-・Add generic image if post has no featured image
+・Add generic image if post has no featured image<br>
+・Add import / export function<br>
 <br>
 
 Note that this addon is still in early beta. If you encounter a bug, please report it.
