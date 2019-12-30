@@ -1,6 +1,7 @@
 <?php
 /**
- * Plugin Name:       es-email-subscribers
+ * Plugin Name:       ES Email Subscribers
+ * Plugin URI:				https://github.com/zynexiz/email-subscribers
  * Description:       Allows your subscribers to get a notification by email on new posts.
  * Version:           v0.1 BETA
  * Requires at least: 5.2
@@ -9,7 +10,13 @@
  * Author URI:        https://github.com/zynexiz
  * License:						GPLv3
  * Text Domain:       es-email-subscribers
+ * Domain Path:				/lang/
  **/
+
+ // If this file is called directly, abort.
+ if (!defined('WPINC')) {
+     die;
+ }
 
 // Define database version, change on database structure change
 if(!defined("ES_DB_VERSION")) define("ES_DB_VERSION", 2);
