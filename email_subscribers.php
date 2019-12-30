@@ -153,7 +153,7 @@ function es_activate() {
 			) $charset_collate;";
 		dbDelta( $sql );
 
-		$templates_dir = dirname(__FILE__,1) . '/includes/templates/sv/';
+		$templates_dir = dirname(__FILE__,1) . '/includes/templates/en/';
 		if ($db_try) {
 			$wpdb->insert( $table_name,
 				array(
