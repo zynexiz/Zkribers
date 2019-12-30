@@ -35,7 +35,7 @@ function es_help_tab() {
 						Unverified e-mails will be deleted after one week if the mail isn't verified. Hovering over the yellow dot will show when the subscriber will be deleted.<br><br>
 						If a subscriber is disabled, that user will be excluded when sending out new e-mails.",
     ) );
-    
+
    $screen->add_help_tab( array(
         'id'		=> 'es_help_templates',
         'title'		=> __('Templates'),
@@ -70,9 +70,9 @@ function es_help_tab() {
 						The plugin only support two-step verification if activated and standard SMTP servers. Third party e-mail services like Mailchimp is not supported.<br><br>
 						This plugin is released under GPLv3 and is free to use and modify. For bug reports and more info please visit GitHub.",
     ) );
-     
+
     /* Sidebar in the help section */
-    $screen->set_help_sidebar( '<b>For more info</b><br><br>This plugin is released under GPLv3 and is free to use and modify. For bug reports and more info please visit GitHub.' );
+    $screen->set_help_sidebar( '<b>For more info</b><br><br>This plugin is released under GPLv3 and is free to use and modify. For bug reports and more info please visit <a href="https://github.com/zynexiz/email-subscribers">GitHub</a>.' );
 }
 
 /**
@@ -89,7 +89,7 @@ function es_tabed_layout( $current = 'subscribers' ) {
 	require_once($ES_DIR . '/pages/options.php');
 
 	// Define the tabs
-	$tabs = array(	'subscribers' => 'Subscribers', 
+	$tabs = array(	'subscribers' => 'Subscribers',
 					'mail_templates' => 'Mail templates',
 					'smtp_options' => 'SMTP options',
 					'options' => __('Options'));
@@ -101,7 +101,7 @@ function es_tabed_layout( $current = 'subscribers' ) {
 		 echo "<a class='nav-tab $class' href='?page=es-settings&tab=$tab'>$name</a>";
 	}
 	echo '</h2>';
-	
+
 	// Show the content for the tab
 	switch ($current) {
 		case 'subscribers':
@@ -127,7 +127,7 @@ function es_tabed_layout( $current = 'subscribers' ) {
  * Register the hook to admin menu
  *
  */
- 
+
 function es_add_settings_link( $links ) {
     $settings_link = '<a href="options-general.php?page=es-settings">' . __( 'Settings' ) . '</a>';
     array_push( $links, $settings_link );
