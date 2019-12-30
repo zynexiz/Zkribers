@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:			Email subscribers for SMTP
+ * Plugin Name:			E-mail subscribers for SMTP
  * Plugin URI:			https://github.com/zynexiz/email-subscribers
  * Description:			Allows your subscribers to get a notification by email on new posts.
  * Version:				v0.1 BETA
