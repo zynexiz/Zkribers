@@ -1,16 +1,17 @@
 <?php
 /**
- * Plugin Name:       ES Email Subscribers
- * Plugin URI:				https://github.com/zynexiz/email-subscribers
- * Description:       Allows your subscribers to get a notification by email on new posts.
- * Version:           v0.1 BETA
- * Requires at least: 5.2
- * Requires PHP:      7.2
- * Author:            Michael Rydén
- * Author URI:        https://github.com/zynexiz
- * License:						GPLv3
- * Text Domain:       es-email-subscribers
- * Domain Path:				/lang/
+ * Plugin Name:			Email subscribers for SMTP
+ * Plugin URI:			https://github.com/zynexiz/email-subscribers
+ * Description:			Allows your subscribers to get a notification by email on new posts.
+ * Version:				v0.1 BETA
+ * Requires at least:	5.2
+ * Requires PHP:		7.2
+ * Author:				Michael Rydén
+ * Author URI:			https://github.com/zynexiz
+ * License:				GPLv3
+ * License URI:			http://www.gnu.org/licenses/gpl-3.0.txt
+ * Text Domain:			es-email-subscribers
+ * Domain Path:			/lang/
  **/
 
  // If this file is called directly, abort.
@@ -69,7 +70,7 @@ function es_load_widget() {
     register_widget( 'es_widget' );
 }
 
-function submit_email () {
+function submit_email() {
 	global $wpdb;
 	$sql = "SELECT active FROM {$wpdb->prefix}es_templates WHERE slug='VT'";
 	$query = $wpdb->get_results($sql, 'ARRAY_A');
@@ -224,8 +225,6 @@ function es_deactivate() {
 	$timestamp = wp_next_scheduled( 'es_cron_jobbs' );
 	wp_unschedule_event( $timestamp, 'es_cron_jobbs' );
 	wp_clear_scheduled_hook('es_cron_jobbs');
-
-	delete_option('es_debug');
 }
 
 /**
