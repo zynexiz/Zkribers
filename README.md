@@ -15,7 +15,6 @@ To support my work, consider to donate on <a href="https://liberapay.com/zynex">
 ・Audit code<br>
 ・Add changing of intervalls between sending out mail<br>
 ・External cron jobb script<br>
-・Better security for storing authentication password in database<br>
 ・Add better looking verify/unsubscribe pages<br>
 ・Add internationalization<br>
 ・Add generic image if post has no featured image<br>
