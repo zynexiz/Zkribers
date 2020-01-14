@@ -13,7 +13,7 @@ To support my work, consider to donate on <a href="https://liberapay.com/zynex">
 
 ### ToDo:
 ・Audit code<br>
-・Add changing of intervalls between sending out mail<br>
+・Add changing of intervalls between sending out mail (atm once a day)<br>
 ・External cron jobb script<br>
 ・Add better looking verify/unsubscribe pages<br>
 ・Add internationalization<br>
