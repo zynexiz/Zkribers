@@ -1,13 +1,14 @@
 <?php
-function smtp_options() { 
+function smtp_options() {
 	global $phpmailer;
 	$opt = get_option('es_options');
-	
+
 	if (!empty($_POST)) {
 		if (isset($_POST['save'])) {
-			$opt['name'] = $_POST['name'];
-			$opt['email'] = $_POST['email'];
-			$opt['hostname'] = $_POST['hostname'];
+			$error_log = '';
+			if (verify_data($_POST['name'], 'name', false)) {$opt['name'] = $_POST['name'];} else { $error_log.= '‣ Illegal characters in name.<br>';}
+			if (verify_data($_POST['email'], 'email', false)) {$opt['email'] = $_POST['email'];} else { $error_log.= '‣ E-mail not correct.<br>';}
+			if (verify_data($_POST['hostname'], 'hostname', false)) {$opt['hostname'] = $_POST['hostname'];} else { $error_log.= '‣ Domain name not valid.<br>';}
 			$opt['authentication'] = (isset($_POST['authentication'])) ? true : false;
 			switch ($_POST['protocol']) {
 				case 25:
@@ -16,11 +17,19 @@ function smtp_options() {
 					$opt['protocol']='ssl'; break;
 				case 587:
 					$opt['protocol']='tls'; break;
+				default:
+					$error_log.= '‣ Invalid protocol.<br>';
+					break;
 			}
-			$opt['port'] = $_POST['port'];
-			$opt['login'] = $_POST['login'];
+			if (verify_data($_POST['port'], 'int', false)) {$opt['port'] = $_POST['port'];} else { $error_log.= '‣ Port must be a number.<br>';}
+			if (verify_data($_POST['login'], 'email', false)) {$opt['login'] = $_POST['login'];} else { $error_log.= '‣ Authentication login must be a valid e-mail.<br>';}
 			$opt['pwd'] = base64_encode($_POST['pwd']);
-			update_option( 'es_options', $opt);
+			if (!$error_log) {
+				update_option( 'es_options', $opt);
+				show_infobox('Information updated.', 'Test your connection by clicking \'Send test mail\'.', '#3D9644');
+			} else {
+				show_infobox('There seems to be a problem.', $error_log, '#F98A89');
+			}
 		}
 		if (isset($_POST['testmail'])) {
 			$to = (get_userdata( get_current_user_id() ))->user_email;
@@ -30,13 +39,13 @@ function smtp_options() {
 
 			$result = wp_mail( $to, $subject, $message, $headers);
 			if ( $result ) {
-				$sendinfo = 'The test message was sent. Check your email inbox.';
+				show_infobox('The test message was sent.', 'Check your email inbox to see if everything worked.', '#3D9644');
 			} else {
-				$sendinfo = $phpmailer->ErrorInfo;
+				show_infobox('The test message was NOT sent.', 'Check your credentials and doimain/port.<br>Error: '.substr($phpmailer->ErrorInfo, 0, -60), '#F98A89');
 			}
 		}
 	} ?>
-	
+
 	<h2>SMTP Options</h2>
 	<em>Enter your SMTP server details here. Most servers require authentication before relaying e-mails.<br>
 	The test e-mail will be sent to the e-mail you entered in your users contact information.</em>
@@ -76,7 +85,7 @@ function smtp_options() {
 			<tbody id="auth" style="visibility:<?php echo ($opt['authentication']) ? 'visible' : 'collapse'?>;">
 				<tr>
 					<th scope="row"><b>Login e-mail</b></th>
-					<td><input type="text" name="login" value="<?php echo $opt['login']?>"><br>
+					<td><input type="email" name="login" value="<?php echo $opt['login']?>"><br>
 					<em style="font-size:90%">E-mail used for SMTP authentication</em></td>
 				</tr>
 				<tr>
@@ -89,9 +98,6 @@ function smtp_options() {
 				<td style="height: 50px;">
 					<p><input type="submit" name="save" class="button-primary" value="Save" />
 					<input type="submit" name="testmail" class="button-primary" value="Send test mail" /></p>
-				</td>
-				<td>
-					<em style="font-size:90%; color:red;"><?php if (isset($sendinfo)) {echo $sendinfo;}?></em>
 				</td>
 			</tr>
 		</table>

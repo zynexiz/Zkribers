@@ -4,12 +4,12 @@ function options() {
 
 	if (!empty($_POST)) {
 		if (isset($_POST['save'])) {
-			$opt['row_per_page'] = $_POST['rows'];
-			$opt['post_type'] = $_POST['inc_post_type'];
+			$opt['row_per_page'] = verify_data($_POST['rows'], 'int', false);
+			$opt['post_type'] = explode(',',verify_data($_POST['inc_post_type'],'post_type'));
 			update_option( 'es_options', $opt);
 		}
 	}
-	
+
 	$post_types = array_merge(array('post' => 'post', 'page' => 'page'), get_post_types( array('public'   => true, '_builtin' => false) ));
 
 ?>

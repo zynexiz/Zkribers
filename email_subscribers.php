@@ -15,9 +15,7 @@
  **/
 
  // If this file is called directly, abort.
- if (!defined('WPINC')) {
-     die;
- }
+if ( ! defined( 'ABSPATH' ) ){ die; }
 
 // Define database version, change on database structure change
 if(!defined("ES_DB_VERSION")) define("ES_DB_VERSION", 2);
@@ -29,21 +27,102 @@ require_once(dirname(__FILE__) . '/includes/send_mail.php');
 register_activation_hook( __FILE__, 'es_activate' );
 register_deactivation_hook (__FILE__, 'es_deactivate');
 
+// Define the widget
 add_action( 'widgets_init', 'es_load_widget' );
 
 if (is_admin()) {
 	// Add plugin to Admin panel
 	add_action('admin_menu', 'setup_es_admin_page');
+
 }
 
 /**
- * Initialize everything
+ * Verify data from post or get type and return the value
+ *
+ * @param mixed $data
+ * @param string $type
+ * @param bool $abort_on_error
+ * @param string $result
+ */
+ function verify_data( $data, $type, $abort_on_error = true) {
+	switch ($type) {
+		case 'tabs':
+			$error_body = 'Page not found, error 404.';
+			$regex = '/^(subscribers|mail_templates|smtp_options|options)$/';
+			break;
+		case 'email':
+			$regex = '/^(?!(?:(?:\x22?\x5C[\x00-\x7E]\x22?)|(?:\x22?[^\x5C\x22]\x22?)){255,})(?!(?:(?:\x22?\x5C[\x00-\x7E]\x22?)|(?:\x22?[^\x5C\x22]\x22?)){65,}@)(?:(?:[\x21\x23-\x27\x2A\x2B\x2D\x2F-\x39\x3D\x3F\x5E-\x7E]+)|(?:\x22(?:[\x01-\x08\x0B\x0C\x0E-\x1F\x21\x23-\x5B\x5D-\x7F]|(?:\x5C[\x00-\x7F]))*\x22))(?:\.(?:(?:[\x21\x23-\x27\x2A\x2B\x2D\x2F-\x39\x3D\x3F\x5E-\x7E]+)|(?:\x22(?:[\x01-\x08\x0B\x0C\x0E-\x1F\x21\x23-\x5B\x5D-\x7F]|(?:\x5C[\x00-\x7F]))*\x22)))*@(?:(?:(?!.*[^.]{64,})(?:(?:(?:xn--)?[a-z0-9]+(?:-[a-z0-9]+)*\.){1,126}){1,}(?:(?:[a-z][a-z0-9]*)|(?:(?:xn--)[a-z0-9]+))(?:-[a-z0-9]+)*)|(?:\[(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){7})|(?:(?!(?:.*[a-f0-9][:\]]){7,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?)))|(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){5}:)|(?:(?!(?:.*[a-f0-9]:){5,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3}:)?)))?(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))(?:\.(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))){3}))\]))$/iD';
+			break;
+		case 'int':
+			$regex = '/^[0-9]*$/';
+			break;
+		case 'name':
+			$regex = '/^[^(){}:;+#?$^"%*!&£=\/~@0123456789]+$/';
+			break;
+		case 'order':
+			$regex = '/^(name|email|verified|time|asc|desc)$/';
+			break;
+		case 'hostname';
+			$regex = '/^((\*)|((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|((\*\.)?([a-zA-Z0-9-]+\.){0,5}[a-zA-Z0-9-][a-zA-Z0-9-]+\.[a-zA-Z]{2,63}?))$/';
+			break;
+		case 'post_type';
+			$post_types = implode('|',array_merge(array('post' => 'post', 'page' => 'page'), get_post_types( array('public'   => true, '_builtin' => false) )));
+			$regex = '/\b(?:'.$post_types.')\b/';
+			$data = implode(' ', $data);
+			break;
+		default:
+			show_infobox('It look like there was a problem.', 'Verification set for \'' .$type. '\' not defined.', '#e5b61e');
+			return false;
+	}
+
+	if (!preg_match_all($regex, $data, $result) && $abort_on_error) {
+		show_infobox('It look like there was a problem.', (isset($error_body)) ? $error_body : 'Data verification test failed. Aborting.', '#F98A89');
+		die;
+	}
+
+	return (isset($result[0])?implode(',',$result[0]):false);
+}
+
+/**
+ * Show information box in a customized $color
+ *
+ * @param string $title
+ * @param string $body_text
+ * @param string $hexColor
+ */
+function show_infobox($title, $body_text, $hexColor) {
+	$lightColor = ltrim($hexColor, '#');
+
+	if (strlen($lightColor) == 3) {
+		$lightColor = $lightColor[0] . $lightColor[0] . $lightColor[1] . $lightColor[1] . $lightColor[2] . $lightColor[2];
+	}
+
+	$lightColor = array_map('hexdec', str_split($lightColor, 2));
+
+	foreach ($lightColor as & $color) {
+		$adjustableLimit = 0.85 < 0 ? $color : 255 - $color;
+		$adjustAmount = ceil($adjustableLimit * 0.85);
+
+		$color = str_pad(dechex($color + $adjustAmount), 2, '0', STR_PAD_LEFT);
+	}
+	$lightColor = '#' . implode($lightColor);
+
+	echo '<table cellspacing="0" cellpadding="0" style="width: 98%; margin-top: 10px; margin-bottom: 10px; margin-left: 1%; margin-right: 1%;">
+		<tr><td style="border-radius: 4px 0px 0px 4px; border: 1px solid '.$hexColor.'; background-color: '.$hexColor.'; width: 50px; text-align: center; vertical-align: top; padding-top: 15px;"><span style="font-size: 22px; color: white;">🛈</span></td>
+		<td style="border-radius: 0px 4px 4px 0px; border: 1px solid '.$hexColor.'; background-color: '.$lightColor.'; padding: 15px;">
+			<span style="font-size: 16px; color: '.$hexColor.'; font-weight: bold;">'.$title.'</span><br style="margin-bottom: 10px;">
+			<span style="font-size: 14px; color: black;">'.$body_text.'</span>
+		</td></tr>
+	</table>';
+}
+
+/**
+ * Initialize everything for admin interface
  *
  */
-
 function setup_es_admin_page() {
 	$ES_DIR = dirname(__FILE__);
-	require_once($ES_DIR . '/includes/functions.php');
+	require_once($ES_DIR . '/includes/admin-functions.php');
 
 	$es_page = add_options_page(
 		'Subsribers', // Page title
@@ -70,34 +149,10 @@ function es_load_widget() {
     register_widget( 'es_widget' );
 }
 
-function submit_email() {
-	global $wpdb;
-	$sql = "SELECT active FROM {$wpdb->prefix}es_templates WHERE slug='VT'";
-	$query = $wpdb->get_results($sql, 'ARRAY_A');
-	$verify = ($query[0]['active'] == 1) ? 1 : 2;
-	$table_name = $wpdb->prefix . 'es_subscribers';
-
-	$wpdb->insert( $table_name,
-		array(
-			'name' => $_POST['es_name'],
-			'email' => $_POST['es_email'],
-			'time' => current_time( 'mysql' ),
-			'verified' => $verify,
-			'purge_date' => ($verify == 2) ? NULL : date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp')))),
-		array( '%s', '%s', '%s', '%d') );
-
-	if ($verify < 2) {
-		es_sendmail( array(array('name' => $_POST['es_name'], 'email' => $_POST['es_email'])), 'VT');
-	} else {
-		es_sendmail( array(array('name' => $_POST['es_name'], 'email' => $_POST['es_email'])), 'WT');
-	}
-}
-
 /**
  * Initial setup when plugin is activated
  *
  */
-
 function es_activate() {
 	$opt = get_option('es_options');
 
@@ -169,9 +224,9 @@ function es_activate() {
 					'description' => 'Template for opt-in verification before activating user',
 					'active' => true,
 					'subject' => 'Verify your subscription for #sitename#',
-					'template' => file_get_contents($templates_dir.'verification.php'),
+					'template' => base64_encode(file_get_contents($templates_dir.'verification.php')),
 					'slug' => 'VT'),
-				array( '%s', '%s', '%d') );
+				array( '%s', '%s', '%d', '%s', '%s' ) );
 
 			$wpdb->insert( $table_name,
 				array(
@@ -179,9 +234,9 @@ function es_activate() {
 					'description' => 'Welcome message sent when user subscribed and is verified',
 					'active' => true,
 					'subject' => 'Welcome to #sitename#',
-					'template' => file_get_contents($templates_dir.'welcome.php'),
+					'template' => base64_encode(file_get_contents($templates_dir.'welcome.php')),
 					'slug' => 'WT'),
-				array( '%s', '%s', '%d') );
+				array( '%s', '%s', '%d', '%s', '%s' ) );
 
 			$wpdb->insert( $table_name,
 				array(
@@ -189,9 +244,9 @@ function es_activate() {
 					'description' => 'Main template to inform about new posts that has been published',
 					'active' => true,
 					'subject' => '#sitename# has #newposts# new posts',
-					'template' => file_get_contents($templates_dir.'posts.php'),
+					'template' => base64_encode(file_get_contents($templates_dir.'posts.php')),
 					'slug' => 'PT'),
-				array( '%s', '%s', '%d') );
+				array( '%s', '%s', '%d', '%s', '%s' ) );
 
 			$wpdb->insert( $table_name,
 				array(
@@ -199,9 +254,9 @@ function es_activate() {
 					'description' => 'Template for sending a message after user has unsubscribed',
 					'active' => true,
 					'subject' => 'Unsubscribe confirmaion',
-					'template' => file_get_contents($templates_dir.'unsubscribed.php'),
+					'template' => base64_encode(file_get_contents($templates_dir.'unsubscribed.php')),
 				'slug' => 'US'),
-				array( '%s', '%s', '%d') );
+				array( '%s', '%s', '%d', '%s', '%s' ) );
 		}
 	}
 
@@ -301,4 +356,29 @@ class es_widget extends WP_Widget {
 		$instance['submit'] = ( ! empty( $new_instance['submit'] ) ) ? strip_tags( $new_instance['submit'] ) : '';
 		return $instance;
 	}
+}
+
+/**
+ * Send out welcome or verify e-mail when new user subscribed
+ *
+ */
+function submit_email() {
+	global $wpdb;
+	$sql = "SELECT active FROM {$wpdb->prefix}es_templates WHERE slug='VT'";
+	$query = $wpdb->get_results($sql, 'ARRAY_A');
+	$verify = ($query[0]['active'] == 1) ? 'VT' : 'WT';
+	$table_name = $wpdb->prefix . 'es_subscribers';
+	$s_name = sanitize_text_field($_POST['es_name']);
+	$s_mail = sanitize_email($_POST['es_email']);
+
+	$wpdb->insert( $table_name,
+		array(
+			'name' => $s_name,
+			'email' => $s_mail,
+			'time' => current_time( 'mysql' ),
+			'verified' => $verify,
+			'purge_date' => ($verify == 'WT') ? NULL : date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp')))),
+		array( '%s', '%s', '%s', '%d') );
+
+		es_sendmail( array(array('name' => $s_name, 'email' => $s_mail)), $verify);
 }

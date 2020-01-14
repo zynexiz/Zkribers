@@ -1,14 +1,20 @@
 <?php
 function subscribers() {
 	$form = isset($_GET['action']) ? $_GET['action'] : NULL;
-	
+
 	if ($form == 'adduser' || $form == 'edit') {
-		$uid = $form == 'edit' ? $_GET['id'] : NULL;
+		$uid = ($form == 'edit') ? verify_data($_GET['id'], 'int') : NULL;
 		if (isset($_POST['save'])) {
-			save_post( $uid );
-			if (!isset($_POST['verified'])) { es_sendmail( array(array('name' => $_POST['name'], 'email' => $_POST['email'])), 'VT'); }
-			if (isset($_POST['send_welcome'])) { es_sendmail( array(array('name' => $_POST['name'], 'email' => $_POST['email'])), 'WT'); }
-			redirect( '&tab=subscribers&paged='.$_GET['paged'] );
+			if ((!$s_name = verify_data($_POST['name'], 'name', false)) || (!$s_email = verify_data($_POST['email'] , 'email', false))) {
+				show_infobox('It look like there was a problem.', 'Name or e-mail not correct.', '#e5b61e');
+				post_form( $uid );
+				return;
+			} else {
+				save_post( $uid );
+				if (!isset($_POST['verified'])) { es_sendmail( array(array('name' => $s_name, 'email' => $s_email)), 'VT'); }
+				if (isset($_POST['send_welcome'])) { es_sendmail( array(array('name' => $s_name, 'email' => $s_email)), 'WT'); }
+				redirect( '&tab=subscribers&paged='.(is_numeric($_GET['paged']) ? $_GET['paged'] : '1') );
+			}
 		} else {
 			post_form( $uid );
 			return;
@@ -19,7 +25,8 @@ function subscribers() {
 	<span style="color: green;">&#11044;&nbsp</span><em>Verified</em>&nbsp&nbsp&nbsp
 	<span style="color: yellow;">&#11044;&nbsp</span><em>Waiting for verification</em>&nbsp&nbsp&nbsp
 	<span style="color: red;">&#11044;&nbsp</span><em>Disabled</em></div>
-	<form method="post">'; 
+	<form method="post">';
+
 	$table_obj = new Subscribers_Table();
 	$table_obj->prepare_items();
 	$table_obj->display();
@@ -81,20 +88,23 @@ function save_post( $userID = NULL ) {
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'es_subscribers';
 
+	$s_name = verify_data($_POST['name'], 'name');
+	$s_email = verify_data($_POST['email'] , 'email');
+
 	if (isset($userID)) {
 		$wpdb->update( $table_name,
-			array( 
-				'name' => $_POST['name'],
-				'email' => $_POST['email'], 
+			array(
+				'name' => $s_name,
+				'email' => $s_email,
 				'verified' => (isset($_POST['verified']) ? 2 : 1),
 				'purge_date' => (isset($_POST['verified']) ? NULL : date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp'))))),
 			array( 'id' => $userID ),
 			array( '%s', '%s', '%d') );
-	} else {	
+	} else {
 		$wpdb->insert( $table_name,
-			array( 
-				'name' => $_POST['name'],
-				'email' => $_POST['email'], 
+			array(
+				'name' => $s_name,
+				'email' => $s_email,
 				'time' => current_time( 'mysql' ),
 				'verified' => (isset($_POST['verified']) ? 2 : 1),
 				'purge_date' => (isset($_POST['verified']) ? NULL : date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp'))))),
@@ -117,7 +127,7 @@ class Subscribers_Table extends WP_List_Table {
 
 		]);
 	}
-	
+
 /**
 * Retrieve subscribers data from the database
 *
@@ -126,17 +136,17 @@ class Subscribers_Table extends WP_List_Table {
 *
 * @return mixed
 */
-	static function get_subscribers( $per_page = 12, $page_number = 1 ) { 
+	static function get_subscribers( $per_page = 12, $page_number = 1 ) {
 		global $wpdb;
 
-		$orderby = empty($_REQUEST['orderby']) ? 'name' : $_REQUEST['orderby'];
-		$order = empty($_REQUEST['order']) ? 'asc' : $_REQUEST['order'];
+		$orderby = empty($_GET['orderby']) ? 'name' : verify_data($_GET['orderby'], 'order');
+		$order = empty($_GET['order']) ? 'asc' : verify_data($_GET['order'], 'order');
 
-		$sql = "SELECT * FROM {$wpdb->prefix}es_subscribers";			
-		$sql .= ' ORDER BY ' . esc_sql( $orderby ) . ' ' . esc_sql( $order );
+		$sql = "SELECT * FROM {$wpdb->prefix}es_subscribers";
+		$sql .= ' ORDER BY ' . $orderby . ' ' . $order;
 		$sql .= ' LIMIT ' . $per_page;
 		$sql .= ' OFFSET ' . ($page_number -1) * $per_page;
-		
+
 		return $wpdb->get_results($sql, 'ARRAY_A');
 	}
 
@@ -147,10 +157,10 @@ class Subscribers_Table extends WP_List_Table {
 */
 	static function delete_subscriber ( $id ) {
 		global $wpdb;
-		
+
 		$wpdb->delete(
 			"{$wpdb->prefix}es_subscribers",
-			['id' => $id],
+			['id' => verify_data($id, 'int')],
 			['%d']
 		);
 	}
@@ -164,8 +174,7 @@ class Subscribers_Table extends WP_List_Table {
 
 	static function verify_subscriber ( $id , $v) {
 		global $wpdb;
-
-		$sql = "UPDATE {$wpdb->prefix}es_subscribers SET verified = $v, purge_date = NULL WHERE id=$id";
+		$sql = "UPDATE {$wpdb->prefix}es_subscribers SET verified = $v, purge_date = NULL WHERE id=".verify_data($id, 'int');
 		$query = $wpdb->get_results($sql, 'ARRAY_A');
 	}
 
@@ -177,37 +186,35 @@ class Subscribers_Table extends WP_List_Table {
 */
 
 	static function resendverify ( $id ) {
+		$id = verify_data($id, 'int');
 		global $wpdb;
 		$sql = "SELECT * FROM {$wpdb->prefix}es_subscribers WHERE id IN ($id)";
 		$query = $wpdb->get_results($sql, 'ARRAY_A');
-		
+
 		foreach ($query as $subscriber) {
 			$to[] = array('name' => $subscriber['name'], 'email' => $subscriber['email']);
 		}
-		
-		$sql = "UPDATE {$wpdb->prefix}es_subscribers SET verified = 1, purge_date = '".date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp')))."' WHERE id IN ($id)";
-		$query = $wpdb->get_results($sql, 'ARRAY_A');
+
 		es_sendmail($to , 'VT');
-	}
-	
+		$sql = "UPDATE {$wpdb->prefix}es_subscribers SET verified = 1, purge_date = '".date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp')))."' WHERE id IN ($id)";
+		$query = $wpdb->get_results($sql, 'ARRAY_A');	}
+
 /**
 * Returns the count of records in the database.
 *
 * @return null|string
 */
-	
+
 	static function record_count() {
 		global $wpdb;
-		
 		$sql = "SELECT COUNT(*) FROM {$wpdb->prefix}es_subscribers";
-		
 		return $wpdb->get_var( $sql );
 	}
 
 	function no_items() {
 		_e( 'You have no subscribers yet.', 'sp' );
 	}
-	
+
 /**
 * Function methods for name, verified and default columns output)
 *
@@ -231,7 +238,7 @@ class Subscribers_Table extends WP_List_Table {
 		];
 		return $item['name'] . $this->row_actions( $actions );
 	}
-	
+
 	function column_verified ( $item ) {
 		$verified = $item['verified'];
 		switch ($verified) {
@@ -247,7 +254,7 @@ class Subscribers_Table extends WP_List_Table {
 		}
 		return $verified;
 	}
-	
+
 	function column_default( $item, $column_name ) {
 		switch ($column_name) {
 			case 'email':
@@ -258,7 +265,7 @@ class Subscribers_Table extends WP_List_Table {
 				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
 		}
 	}
-	
+
 /**
 * Render the bulk edit checkbox
 *
@@ -271,7 +278,7 @@ class Subscribers_Table extends WP_List_Table {
 			'<input type="checkbox" name="bulk-action[]" value="%s" />', $item['id']
 		);
 	}
-	
+
 /**
 *  Associative array of columns
 *
@@ -283,12 +290,12 @@ class Subscribers_Table extends WP_List_Table {
 			'name'		=> 'Name',
 			'email'		=> 'E-mail',
 			'verified'	=> 'Verified',
-			'time'		=> 'Registered'			
+			'time'		=> 'Registered'
 		];
 
 		return $columns;
 	}
-	
+
 /**
 * Columns to make sortable.
 *
@@ -304,7 +311,7 @@ class Subscribers_Table extends WP_List_Table {
 
 	return $sortable_columns;
 	}
-	
+
 /**
 * Returns an associative array containing the bulk action
 *
@@ -314,7 +321,7 @@ class Subscribers_Table extends WP_List_Table {
 		$actions = [
 			'bulk-delete' => 'Delete',
 			'bulk-verify' => 'Verify',
-			'bulk-unverify' => 'Unverify',
+			'bulk-unverify' => 'Disable',
 			'bulk-resendverify' => 'Send verify mail'
 		];
 
@@ -367,10 +374,10 @@ class Subscribers_Table extends WP_List_Table {
 *
 * @return int
 */
-	public function current_page() { 
+	public function current_page() {
 		return $this->get_pagenum();
 	}
-	
+
 /**
 * Handles data query and filter, sorting, and pagination.
 *
@@ -389,21 +396,22 @@ class Subscribers_Table extends WP_List_Table {
 		$hidden   = array();
 		$sortable = $this->get_sortable_columns();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
-		
+
 		if ($this->current_action()) {
-			$uid = isset($_POST['bulk-action']) ? $_POST['bulk-action'] : array(absint($_GET['id']));
+			// Check if bulk action is called, or single user action.
+			$uid = isset($_POST['bulk-action']) ? $_POST['bulk-action'] : array($_GET['id']);
 			$this->process_bulk_action($this->current_action(), $uid);
 		}
-		
+
 		$per_page		= $opt['row_per_page'];
 		$current_page	= $this->get_pagenum();
 		$total_items	= self::record_count();
-		
+
 		$this->set_pagination_args( [
 			'total_items' => $total_items,
 			'per_page' => $per_page
 		] );
-		
+
 		$this->items = self::get_subscribers( $per_page, $current_page );
 	}
 }

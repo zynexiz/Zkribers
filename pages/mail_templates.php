@@ -1,37 +1,35 @@
 <?php
 function mail_templates() {
 	global $wpdb;
-	
 	$table_obj = new Templets_Table(); // Create new table class
-	
+
 	if (!empty($_GET['action'])) {
 		$templates =  Templets_Table::get_templets();
+		$tid = verify_data( $_GET['id'], 'int');
 		switch ($_GET['action']) {
 			case 'active':
 				$table_name = $wpdb->prefix . 'es_templates';
 				$wpdb->update( $table_name,
-					array( 'active' => ($templates[$_GET['id']-1]['active'] == true ? false : true) ),
-					array( 'id' => $_GET['id'] ),
+					array( 'active' => ($templates[-1]['active'] == true ? false : true) ),
+					array( 'id' => $tid ),
 					array( '%d' ) );
 				break;
 			case 'edit':
 				if (isset($_POST['save'])) {
 					$table_name = $wpdb->prefix . 'es_templates';
-					$data = stripslashes_deep($_POST['es_edit']);
-					$subject = stripslashes_deep($_POST['subject']);
 					$wpdb->update( $table_name,
-						array( 'template' =>  $data,
-							   'subject' => $subject ),
-						array( 'id' => $_GET['id'] ),
+						array( 'template' =>  base64_encode(stripslashes_deep($_POST['es_edit'])),
+							   'subject' => base64_encode(stripslashes_deep($_POST['subject'])) ),
+						array( 'id' => $tid ),
 						array( '%s', '%s' ) );
 				} else {
-					tinymce_init( ($templates[$_GET['id']-1]['slug'] == 'PT') ? true : false);
-					$data = $templates[$_GET['id']-1]['template'];
-					$subject = $templates[$_GET['id']-1]['subject'];
-					echo '<p><h1>Edit '.strtolower($templates[$_GET['id']-1]['title']).'</h1></p>';
+					tinymce_init( ($templates[$tid-1]['slug'] == 'PT') ? true : false);
+					$data = base64_decode($templates[$tid-1]['template']);
+					$subject = base64_decode($templates[$tid-1]['subject']);
+					echo '<p><h1>Edit '.strtolower($templates[$tid-1]['title']).'</h1></p>';
 					echo '<form method="post">
 					      E-mail subject <em style="font-size:80%;">(Subject support #sitename#
-					      '.(($templates[$_GET['id']-1]['slug'] == 'PT') ? ' and #newposts#' : '').' shortcode)</em><br>
+					      '.(($templates[$tid-1]['slug'] == 'PT') ? ' and #newposts#' : '').' shortcode)</em><br>
 					      <input style="width:50%" type="text" value="'.$subject.'" name="subject" placeholder="Subject title for e-mail" required><br><br>
 					      <textarea name="es_edit" oncontextmenu="return false;">'.$data.'</textarea><br>
 					      <p><input type="submit" name="save" class="button-primary" value="Save" />
@@ -39,7 +37,9 @@ function mail_templates() {
 						  </form>';
 					return;
 				}
+				break;
 			default:
+				show_infobox('It look like there was a problem.', 'Illegal action requested.', '#F98A89');
 				break;
 		}
 	}
@@ -66,7 +66,7 @@ class Templets_Table extends WP_List_Table {
 
 		]);
 	}
-	
+
 /**
 * Create templates array
 *
@@ -78,7 +78,7 @@ class Templets_Table extends WP_List_Table {
 	public static function get_templets() {
 		global $wpdb;
 
-		$sql = "SELECT * FROM {$wpdb->prefix}es_templates";			
+		$sql = "SELECT * FROM {$wpdb->prefix}es_templates";
 		return $wpdb->get_results($sql, 'ARRAY_A');
 	}
 
@@ -93,19 +93,21 @@ class Templets_Table extends WP_List_Table {
 	function column_active ( $item ) {
 		return ($item['active']) ? '<span style="color: green;">&#11044;</span>' : '<span style="color: red;">&#11044;</span>' ;
 	}
-	
+
 	function column_modify( $item ) {
 		$active = $item['active'] == true ? 'Deactivate' : 'Activate';
+		$tab = verify_data($_GET['tab'], 'tabs');
+		$tid = verify_data($item['id'], 'int');
 		$action = '
-			<div style="float: right; padding-left: 15px;"><a href="?page=es-settings&tab='.$_GET['tab'].'&id='.$item['id'].'&action=edit" class="button-primary">Edit template</a></div>
-			<div style="float: right; padding-left: 10px;"><a href="?page=es-settings&tab='.$_GET['tab'].'&id='.$item['id'].'&action=active" class="button-primary">'.$active.'</a></div>
+			<div style="float: right; padding-left: 15px;"><a href="?page=es-settings&tab='.$tab.'&id='.$tid.'&action=edit" class="button-primary">Edit template</a></div>
+			<div style="float: right; padding-left: 10px;"><a href="?page=es-settings&tab='.$tab.'&id='.$tid.'&action=active" class="button-primary">'.$active.'</a></div>
 		';
 		return $action;
 	}
 
 	function column_default( $item, $column_name ) {
 		return $item[ $column_name ];
-	}	
+	}
 
 /**
 *  Associative array of columns
@@ -139,7 +141,7 @@ class Templets_Table extends WP_List_Table {
 		$hidden   = array();
 		$sortable = array();
 		$this->_column_headers = array( $columns, $hidden, $sortable );
-		
+
 		$this->items = self::get_templets();
 	}
 }
@@ -149,7 +151,7 @@ class Templets_Table extends WP_List_Table {
  *
  * @param bolean $show_post_tags
  */
- 
+
 function tinymce_init( $show_post_tags = false) { ?>
 	<script>tinymce.init({
 		selector: 'textarea',
@@ -246,7 +248,7 @@ function tinymce_init( $show_post_tags = false) { ?>
 									type: 'menuitem',
 									text: '# of new posts',
 									onAction: function () { editor.insertContent('#newposts#'); }
-								},  
+								},
 								{
 									type: 'menuitem',
 									text: 'Loop block start',

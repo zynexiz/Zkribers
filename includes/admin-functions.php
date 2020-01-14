@@ -5,16 +5,34 @@
  */
 
 function es_contents() {
-	$tab = isset($_GET[ 'tab' ]) ? $_GET[ 'tab' ] : 'subscribers';
-
 	// Create a header in the default WordPress 'wrap' container
 	echo '<div class="wrap">
 		  <div id="icon-themes" class="icon32"></div>
 		  <h2>E-mail subscribers options</h2>';
 
 	// Create the tabs and show content
-	es_tabed_layout( $tab );
+	$ES_DIR = dirname(__FILE__,2);
+	$page = isset($_GET[ 'tab' ]) ? verify_data($_GET[ 'tab' ], 'tabs') : 'subscribers';
+	require_once($ES_DIR . '/pages/subscribers.php');
+	require_once($ES_DIR . '/pages/mail_templates.php');
+	require_once($ES_DIR . '/pages/smtp_options.php');
+	require_once($ES_DIR . '/pages/options.php');
 
+	// Define the tabs
+	$tabs = array(	'subscribers' => 'Subscribers',
+					'mail_templates' => 'Mail templates',
+					'smtp_options' => 'SMTP options',
+					'options' => __('Options'));
+
+	echo '<div id="icon-themes" class="icon32"><br></div>';
+	echo '<h2 class="nav-tab-wrapper">';
+	foreach( $tabs as $tab => $name ){
+		$class = ( $tab == $page ) ? 'nav-tab-active' : '';
+		 echo "<a class='nav-tab $class' href='?page=es-settings&tab=$tab'>$name</a>";
+	}
+	echo '</h2>';
+
+	call_user_func(verify_data( $page, 'tabs'));
 	echo '</div>';
 }
 
@@ -76,62 +94,15 @@ function es_help_tab() {
 }
 
 /**
- * Define tabs and show the content
+ * Add quick link to settings from plugin addons page
  *
- * @param string $current - What tab to display
+ * @param string $link
  */
 
-function es_tabed_layout( $current = 'subscribers' ) {
-	$ES_DIR = dirname(__FILE__,2);
-	require_once($ES_DIR . '/pages/subscribers.php');
-	require_once($ES_DIR . '/pages/mail_templates.php');
-	require_once($ES_DIR . '/pages/smtp_options.php');
-	require_once($ES_DIR . '/pages/options.php');
-
-	// Define the tabs
-	$tabs = array(	'subscribers' => 'Subscribers',
-					'mail_templates' => 'Mail templates',
-					'smtp_options' => 'SMTP options',
-					'options' => __('Options'));
-
-	echo '<div id="icon-themes" class="icon32"><br></div>';
-	echo '<h2 class="nav-tab-wrapper">';
-	foreach( $tabs as $tab => $name ){
-		$class = ( $tab == $current ) ? 'nav-tab-active' : '';
-		 echo "<a class='nav-tab $class' href='?page=es-settings&tab=$tab'>$name</a>";
-	}
-	echo '</h2>';
-
-	// Show the content for the tab
-	switch ($current) {
-		case 'subscribers':
-			call_user_func('subscribers');
-			break;
-		case 'mail_templates':
-			call_user_func('mail_templates');
-			break;
-		case 'smtp_options':
-			call_user_func('smtp_options');
-			break;
-		case 'options':
-			call_user_func('options');
-			break;
-		default:
-			echo '<h2>Error, page do not exist.</h2>';
-			return;
-	}
-	return $current;
-}
-
-/**
- * Register the hook to admin menu
- *
- */
-
-function es_add_settings_link( $links ) {
+function es_add_settings_link( $link ) {
     $settings_link = '<a href="options-general.php?page=es-settings">' . __( 'Settings' ) . '</a>';
-    array_push( $links, $settings_link );
-  	return $links;
+    array_push( $link, $settings_link );
+  	return $link;
 }
 
 /**
@@ -141,7 +112,7 @@ function es_add_settings_link( $links ) {
  */
 
 function redirect( $option = '') {
-	$location = admin_url('options-general.php?page='.$_GET['page'].$option);
+	$location = admin_url('options-general.php?page=es-settings'.$option);
 	echo '<p>Please wait, redirecting..</p>';
 	echo "<meta http-equiv='refresh' content='0;url=$location' />";
 	exit;

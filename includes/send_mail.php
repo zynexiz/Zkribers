@@ -10,25 +10,24 @@ function es_cron_function() {
 	$opt = get_option('es_options');
 
 	foreach ($query as $subscriber) {
-		// Purge old unverified subscribers after a week
-		if (!empty($subscriber['purge_date']) && $subscriber['purge_date'] < date('Y-m-d H:i:s',current_time('timestamp'))) {
+		if ($subscriber['verified'] == "2") {
+			// Get subscribers and send out e-mail if new posts been published
+			$to[] = array('name' => $subscriber['name'], 'email' => $subscriber['email']);
+		} else if (!empty($subscriber['purge_date']) && $subscriber['purge_date'] < date('Y-m-d H:i:s',current_time('timestamp'))) {
+			// Purge old unverified subscribers after a week
 			$wpdb->delete(
 				"{$wpdb->prefix}es_subscribers",
 				['id' => $subscriber['id']],
 				['%d']
 			);
 		}
-		
-		// Get subscribers and send out e-mail if new posts been published
-		if ($subscriber['verified'] == "2") {
-			$to[] = array('name' => $subscriber['name'], 'email' => $subscriber['email']);
-		}
 	}
+
 	if (date('Y-m-d H:i:s', current_time('timestamp')) > date('Y-m-d H:i:s',strtotime($opt['last_send'] . $opt['send_interval']))) {
 		es_sendmail($to , 'PT');
 		$opt['last_send'] = current_time('mysql');
 		update_option( 'es_options', $opt);
-	}	
+	}
 }
 
 /**
@@ -36,15 +35,16 @@ function es_cron_function() {
  *
  * @param array $to
  * @param string $template_slug
+ * @return bool $result
  */
 
 function es_sendmail( $to, $template_slug) {
 	global $wpdb;
 
-	$sql = "SELECT * FROM {$wpdb->prefix}es_templates WHERE slug='$template_slug'";			
+	$sql = "SELECT * FROM {$wpdb->prefix}es_templates WHERE slug='$template_slug'";
 	$templates = $wpdb->get_results($sql, 'ARRAY_A');
-	
-	// If template is disabled, exit. 
+
+	// If template is disabled, exit.
 	if (!$templates[0]['active']) { return; }
 
 	if ($template_slug == 'PT') {
@@ -58,10 +58,10 @@ function es_sendmail( $to, $template_slug) {
 		$new_posts = $query->found_posts;
 
 		if ( !$query->have_posts() ) { return; }
-	
+
 		// Extract content before and after the loop block
 		$loop_start = strpos($templates[0]['template'],"#loopstart#");
-		
+
 		// If #loopstart# is missing, just get the last post
 		if (!$loop_start) {
 			$main_loop = $templates[0]['template'];
@@ -86,13 +86,13 @@ function es_sendmail( $to, $template_slug) {
 							"#postedby#" => get_the_author_meta('display_name'));
 			$body .= strtr($main_loop,$bodytags);
 		} while ( $query->have_posts() && $loop_start);
-		
+
 		$bodytags = array("#sitename#" => get_option('blogname'),
 						"#siteurl#" => site_url(),
 						"#sitedescription#" => get_option('blogdescription'),
 						"#newposts#" => $new_posts);
 		$subjecttags = array("#sitename#" => get_option('blogname'),"#newposts#" => $new_posts);
-						
+
 		$body .= $post_loop;
 		$meassage = strtr($body,$bodytags);
 		$subject = strtr($templates[0]['subject'],$subjecttags);
@@ -106,7 +106,7 @@ function es_sendmail( $to, $template_slug) {
 						"#sitedescription#" => get_option('blogdescription'));
 
 		$subjecttags = array("#sitename#" => get_option('blogname'));
-	
+
 		$meassage = strtr($templates[0]['template'],$bodytags);
 		$subject = strtr($templates[0]['subject'],$subjecttags);
 	}
@@ -129,6 +129,7 @@ function es_sendmail( $to, $template_slug) {
 						array( 'email' => $subscriber['email'] ),
 						array( '%s') );
 	}
+	return $result;
 }
 
 /**
@@ -138,7 +139,7 @@ function es_sendmail( $to, $template_slug) {
 
 function send_smtp_email( $phpmailer ) {
 	$opt = get_option('es_options');
-	
+
 	$phpmailer->isSMTP();
 	$phpmailer->Timeout    = 15;
 	$phpmailer->Host       = $opt['hostname'];

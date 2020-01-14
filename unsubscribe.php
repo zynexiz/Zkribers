@@ -1,5 +1,5 @@
 <?php
-// Check is param UUID is valid
+// Check if param UUID is valid
 $uuid = (isset($_GET['uuid'])) ? $_GET['uuid'] : '' ;
 $UUIDv4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
 preg_match($UUIDv4, $uuid) or die('Not valid UUID');
