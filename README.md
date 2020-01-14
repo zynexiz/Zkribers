@@ -1,6 +1,8 @@
 # E-mail Subscribers
 E-mail subscribers is a simple addon for Wordpress to manage e-mail subscriptions and automatic e-mail notification for new posts and content. <strong>Note!</strong> This plugin does not support third party e-mail services like Mailchimp, you need to have access to a SMTP server.
 
+Note that this addon is functional, but still in early beta. If you encounter a bug, please report it.
+
 To support my work, consider to donate on <a href="https://liberapay.com/zynex">LiberaPay</a> or <a href="https://www.paypal.com/pools/c/8ldXVJfKHq">PayPal</a>. Thank you!
 
 ### Features include:
@@ -20,8 +22,6 @@ To support my work, consider to donate on <a href="https://liberapay.com/zynex">
 ・Add generic image if post has no featured image<br>
 ・Add import / export function<br>
 <br>
-
-Note that this addon is still in early beta. If you encounter a bug, please report it.
 
 ### Supported shortcodes:
 <table>
