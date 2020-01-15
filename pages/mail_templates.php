@@ -10,7 +10,7 @@ function mail_templates() {
 			case 'active':
 				$table_name = $wpdb->prefix . 'es_templates';
 				$wpdb->update( $table_name,
-					array( 'active' => ($templates[-1]['active'] == true ? false : true) ),
+					array( 'active' => ($templates[$tid-1]['active'] == true ? false : true) ),
 					array( 'id' => $tid ),
 					array( '%d' ) );
 				break;
