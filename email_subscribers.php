@@ -223,7 +223,7 @@ function es_activate() {
 					'title' => 'Verification template',
 					'description' => 'Template for opt-in verification before activating user',
 					'active' => true,
-					'subject' => 'Verify your subscription for #sitename#',
+					'subject' => base64_encode('Verify your subscription for #sitename#'),
 					'template' => base64_encode(file_get_contents($templates_dir.'verification.php')),
 					'slug' => 'VT'),
 				array( '%s', '%s', '%d', '%s', '%s' ) );
@@ -233,7 +233,7 @@ function es_activate() {
 					'title' => 'Welcome template',
 					'description' => 'Welcome message sent when user subscribed and is verified',
 					'active' => true,
-					'subject' => 'Welcome to #sitename#',
+					'subject' => base64_encode('Welcome to #sitename#'),
 					'template' => base64_encode(file_get_contents($templates_dir.'welcome.php')),
 					'slug' => 'WT'),
 				array( '%s', '%s', '%d', '%s', '%s' ) );
@@ -243,7 +243,7 @@ function es_activate() {
 					'title' => 'Posts template',
 					'description' => 'Main template to inform about new posts that has been published',
 					'active' => true,
-					'subject' => '#sitename# has #newposts# new posts',
+					'subject' => base64_encode('#sitename# has #newposts# new posts'),
 					'template' => base64_encode(file_get_contents($templates_dir.'posts.php')),
 					'slug' => 'PT'),
 				array( '%s', '%s', '%d', '%s', '%s' ) );
@@ -253,7 +253,7 @@ function es_activate() {
 					'title' => 'Unsubscribed template',
 					'description' => 'Template for sending a message after user has unsubscribed',
 					'active' => true,
-					'subject' => 'Unsubscribe confirmaion',
+					'subject' => base64_encode('Unsubscribe confirmaion'),
 					'template' => base64_encode(file_get_contents($templates_dir.'unsubscribed.php')),
 				'slug' => 'US'),
 				array( '%s', '%s', '%d', '%s', '%s' ) );

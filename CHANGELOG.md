@@ -1,5 +1,6 @@
 ### Version 0.3 BETA
 - Fixed subject bug on new installations
+- Rename project to avoide collision with another WP plugin
 
 ### Version 0.2 BETA
 - Added 'info box' to display errors and information
