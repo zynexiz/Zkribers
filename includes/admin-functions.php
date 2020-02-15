@@ -86,7 +86,8 @@ function es_help_tab() {
         'title'		=> __('About'),
         'content'	=> "<p><strong>About</strong></p>E-mail subscribers is a simple addon for Wordpress to manage e-mail subscriptions, and setup automatic e-mail notification for new posts.
 						The plugin only support two-step verification if activated and standard SMTP servers. Third party e-mail services like Mailchimp is not supported.<br><br>
-						This plugin is released under GPLv3 and is free to use and modify. For bug reports and more info please visit GitHub.",
+						This plugin is released under GPLv3 and is free to use and modify. For bug reports and more info please visit GitHub.
+						To support the development, consider to subscribe or donate on <a href='https://liberapay.com/zynex'>Liberapay</a> or <a href='https://www.paypal.com/pools/c/8ldXVJfKHq'>Paypal</a>.",
     ) );
 
     /* Sidebar in the help section */

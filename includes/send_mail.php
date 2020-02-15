@@ -43,6 +43,8 @@ function es_sendmail( $to, $template_slug) {
 
 	$sql = "SELECT * FROM {$wpdb->prefix}es_templates WHERE slug='$template_slug'";
 	$templates = $wpdb->get_results($sql, 'ARRAY_A');
+	$templates[0]['template'] =  base64_decode($templates[0]['template']);
+	$templates[0]['subject'] = base64_decode($templates[0]['subject']);
 
 	// If template is disabled, exit.
 	if (!$templates[0]['active']) { return; }
@@ -118,8 +120,8 @@ function es_sendmail( $to, $template_slug) {
 		$uuid = wp_generate_uuid4();
 		$tags = array("#subscribername#" => $subscriber['name'],
 					  "#subscriberemail#" => $subscriber['email'],
-					  "#unsubscribelink#" => site_url() . "/wp-content/plugins/email_subscribers/unsubscribe.php?uuid=".$uuid,
-					  "#verifylink#" => site_url() . "/wp-content/plugins/email_subscribers/verify.php?uuid=".$uuid);
+					  "#unsubscribelink#" => plugin_dir_url(__DIR__) . "useraction.php?a=unsubscribe&uuid=".$uuid,
+					  "#verifylink#" => plugin_dir_url(__DIR__) . "useraction.php?a=verify&uuid=".$uuid);
 		$body = strtr($meassage,$tags);
 		$result = wp_mail( $subscriber['name'] . '<'.$subscriber['email'].'>', $subject, $body, $headers);
 
