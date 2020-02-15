@@ -1,3 +1,6 @@
+### Version 0.3 BETA
+- Fixed subject bug on new installations
+
 ### Version 0.2 BETA
 - Added 'info box' to display errors and information
 - Added sanitizing and validation of data sent to server
@@ -6,4 +9,4 @@
 - Minor bug fixes and improvements
 
 ### Version 0.1 BETA
-Initial release.
+- Initial release.
