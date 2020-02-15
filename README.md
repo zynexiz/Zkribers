@@ -8,8 +8,8 @@ To support my work, consider to donate on <a href="https://liberapay.com/zynex">
 ### Features include:
 ・Usage of SMTP server for sending out mail<br>
 ・Manage and edit subscribers<br>
-・Support for HTML templates with TinyMCE<br>
-・Shortcodes for dynamic content<br>
+・Support for HTML templates with TinyMCE editor<br>
+・Shortcodes for dynamic content integrated into TinyMCE<br>
 ・Enable/disable templates functions<br>
 ・Two-step verification (if enabled)<br>
 
