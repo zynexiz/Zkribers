@@ -21,7 +21,7 @@ function subscribers() {
 		}
 	}
 
-	echo '<h2>Subscribers</h2><form method="post">';
+	echo '<h2>Manage your subscribers</h2><form method="post">';
 	$table_obj = new Subscribers_Table();
 	$table_obj->prepare_items();
 	$table_obj->display();

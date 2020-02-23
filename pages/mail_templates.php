@@ -43,7 +43,7 @@ function mail_templates() {
 				break;
 		}
 	}
-	echo '<h2>E-mail templates</h2>';
+	echo '<h2>Manage and edit e-mail templates</h2>';
 	$table_obj->prepare_items();
 	$table_obj->display();
 	echo '<div style="float:right;">
