@@ -47,8 +47,8 @@ function mail_templates() {
 	$table_obj->prepare_items();
 	$table_obj->display();
 	echo '<div style="float:right;">
-	<span style="color: green;">&#11044;&nbsp</span><em>Templete active</em>&nbsp&nbsp&nbsp
-	<span style="color: red;">&#11044;&nbsp</span><em>Templete deactivated</em></div>';
+	<span style="color: green;">&#11044;&nbsp</span><em>Templete active</em>
+	<span style="color: red; padding-left: 10px;">&#11044;&nbsp</span><em>Templete deactivated</em></div>';
 }
 
 /**

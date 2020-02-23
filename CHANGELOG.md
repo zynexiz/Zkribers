@@ -1,6 +1,8 @@
-### Version 0.3 BETA
+### Version 0.3 BETA (IN PROGRESS)
 - Fixed subject bug on new installations
 - Rename project to avoide collision with another WP plugin
+- Added localization for templete defaults
+- Minor changes to code structure
 
 ### Version 0.2 BETA
 - Added 'info box' to display errors and information

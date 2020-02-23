@@ -21,16 +21,14 @@ function subscribers() {
 		}
 	}
 
-	echo '<h2>Subscribers</h2><div style="float:right;">
-	<span style="color: green;">&#11044;&nbsp</span><em>Verified</em>&nbsp&nbsp&nbsp
-	<span style="color: yellow;">&#11044;&nbsp</span><em>Waiting for verification</em>&nbsp&nbsp&nbsp
-	<span style="color: red;">&#11044;&nbsp</span><em>Disabled</em></div>
-	<form method="post">';
-
+	echo '<h2>Subscribers</h2><form method="post">';
 	$table_obj = new Subscribers_Table();
 	$table_obj->prepare_items();
 	$table_obj->display();
-	echo '<p style="clear: both;"><a href="?page=es-settings&action=adduser&paged=' . $table_obj->current_page(). '" class="button-primary">Add user</a></p></form>';
+	echo '<p style="clear: both;"><div style="float:left;"><a href="?page=es-settings&action=adduser&paged=' . $table_obj->current_page(). '" class="button-primary">Add user</a></div>';
+	echo '<div style="float:right;"><span style="color: green;">&#11044;&nbsp</span><em>Verified</em>
+	<span style="color: yellow; padding-left: 10px;">&#11044;&nbsp</span><em>Waiting for verification</em>
+	<span style="color: red; padding-left: 10px;">&#11044;&nbsp</span><em>Disabled</em></div></p></form>';
 }
 
 /**
@@ -289,7 +287,7 @@ class Subscribers_Table extends WP_List_Table {
 			'cb'		=> '<input type="checkbox" />',
 			'name'		=> 'Name',
 			'email'		=> 'E-mail',
-			'verified'	=> 'Verified',
+			'verified'	=> 'Status',
 			'time'		=> 'Registered'
 		];
 
