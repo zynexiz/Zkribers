@@ -29,7 +29,7 @@ function es_contents() {
 	// Create a header in the default WordPress 'wrap' container
 	echo '<div class="wrap">
 		  <div id="icon-themes" class="icon32"></div>
-		  <h2>E-mail subscribers options</h2>';
+		  <h2>E-mail subscribers for SMTP</h2>';
 
 	// Create the tabs and show content
 	$ES_DIR = dirname(__FILE__,2);
