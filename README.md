@@ -5,6 +5,10 @@ Note that this addon is functional, but still in early beta. If you encounter a 
 
 To support my work, consider to donate on <a href="https://liberapay.com/zynex">LiberaPay</a> or <a href="https://www.paypal.com/pools/c/8ldXVJfKHq">PayPal</a>. Thank you!
 
+### Download:
+Go to releases page to download the plugin.
+https://github.com/zynexiz/email-subscribers-smtp/releases
+
 ### Features include:
 ・Usage of SMTP server for sending out mail<br>
 ・Manage and edit subscribers<br>
