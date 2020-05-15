@@ -9,7 +9,7 @@ To support my work, consider to donate on <a href="https://liberapay.com/zynex">
 
 ### Download:
 Go to releases page to download the plugin.
-https://github.com/zynexiz/email-subscribers-smtp/releases
+https://github.com/zynexiz/Zkribers/releases
 
 ### Features include:
 ・Usage of SMTP server for sending out mail<br>
