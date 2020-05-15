@@ -1,7 +1,7 @@
 ![Screen shot](https://raw.githubusercontent.com/zynexiz/email-subscribers-smtp/master/.screenshot/es-subsc2.png)
 
-# E-mail Subscribers
-E-mail subscribers is a simple addon for Wordpress to manage e-mail subscriptions and automatic e-mail notification for new posts and content. <strong>Note!</strong> This plugin does not support third party e-mail services like Mailchimp, you need to have access to a SMTP server.
+# Zkribers
+Zkribers is a simple addon for Wordpress to manage e-mail subscriptions and automatic e-mail notification for new posts and content. <strong>Note!</strong> This plugin does not support third party e-mail services like Mailchimp, you need to have access to a SMTP server.
 
 Note that this addon is functional, but still in early beta. If you encounter a bug, please report it.
 
