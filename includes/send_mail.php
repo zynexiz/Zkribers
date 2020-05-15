@@ -1,13 +1,13 @@
 <?php
 // Setup SMTP for wp_mail()
 add_action( 'phpmailer_init', 'send_smtp_email' );
-add_action( 'es_cron_jobbs' , 'es_cron_function' );
+add_action( 'zkribers_cron_jobbs' , 'zkribers_cron_function' );
 
-function es_cron_function() {
+function zkribers_cron_function() {
 	global $wpdb;
-	$sql = "SELECT * FROM {$wpdb->prefix}es_subscribers";
+	$sql = "SELECT * FROM {$wpdb->prefix}zkribers_subscribers";
 	$query = $wpdb->get_results($sql, 'ARRAY_A');
-	$opt = get_option('es_options');
+	$opt = get_option('zkribers_options');
 
 	foreach ($query as $subscriber) {
 		if ($subscriber['verified'] == "2") {
@@ -16,7 +16,7 @@ function es_cron_function() {
 		} else if (!empty($subscriber['purge_date']) && $subscriber['purge_date'] < date('Y-m-d H:i:s',current_time('timestamp'))) {
 			// Purge old unverified subscribers after a week
 			$wpdb->delete(
-				"{$wpdb->prefix}es_subscribers",
+				"{$wpdb->prefix}zkribers_subscribers",
 				['id' => $subscriber['id']],
 				['%d']
 			);
@@ -24,9 +24,9 @@ function es_cron_function() {
 	}
 
 	if (date('Y-m-d H:i:s', current_time('timestamp')) > date('Y-m-d H:i:s',strtotime($opt['last_send'] . $opt['send_interval']))) {
-		es_sendmail($to , 'PT');
+		zkribers_sendmail($to , 'PT');
 		$opt['last_send'] = current_time('mysql');
-		update_option( 'es_options', $opt);
+		update_option( 'zkribers_options', $opt);
 	}
 }
 
@@ -38,10 +38,10 @@ function es_cron_function() {
  * @return bool $result
  */
 
-function es_sendmail( $to, $template_slug) {
+function zkribers_sendmail( $to, $template_slug) {
 	global $wpdb;
 
-	$sql = "SELECT * FROM {$wpdb->prefix}es_templates WHERE slug='$template_slug'";
+	$sql = "SELECT * FROM {$wpdb->prefix}zkribers_templates WHERE slug='$template_slug'";
 	$templates = $wpdb->get_results($sql, 'ARRAY_A');
 	$templates[0]['template'] =  base64_decode($templates[0]['template']);
 	$templates[0]['subject'] = base64_decode($templates[0]['subject']);
@@ -50,7 +50,7 @@ function es_sendmail( $to, $template_slug) {
 	if (!$templates[0]['active']) { return; }
 
 	if ($template_slug == 'PT') {
-		$opt = get_option('es_options');
+		$opt = get_option('zkribers_options');
 		$args = array(
 			'post_type' => $opt['post_type'],
 			'post_status' => array ('publish'),
@@ -126,7 +126,7 @@ function es_sendmail( $to, $template_slug) {
 		$result = wp_mail( $subscriber['name'] . '<'.$subscriber['email'].'>', $subject, $body, $headers);
 
 		// Update UUID for user
-		$wpdb->update( $wpdb->prefix . 'es_subscribers',
+		$wpdb->update( $wpdb->prefix . 'zkribers_subscribers',
 						array('uuid' => $uuid),
 						array( 'email' => $subscriber['email'] ),
 						array( '%s') );
@@ -140,7 +140,7 @@ function es_sendmail( $to, $template_slug) {
  */
 
 function send_smtp_email( $phpmailer ) {
-	$opt = get_option('es_options');
+	$opt = get_option('zkribers_options');
 
 	$phpmailer->isSMTP();
 	$phpmailer->Timeout    = 15;

@@ -1,12 +1,12 @@
 <?php
 function options() {
-	$opt = get_option('es_options');
+	$opt = get_option('zkribers_options');
 
 	if (!empty($_POST)) {
 		if (isset($_POST['save'])) {
 			$opt['row_per_page'] = verify_data($_POST['rows'], 'int', false);
 			$opt['post_type'] = explode(',',verify_data($_POST['inc_post_type'],'post_type'));
-			update_option( 'es_options', $opt);
+			update_option( 'zkribers_options', $opt);
 		}
 	}
 

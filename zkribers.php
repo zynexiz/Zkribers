@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:			Zkribers
- * Plugin URI:			https://github.com/zynexiz/email-subscribers
+ * Plugin URI:			https://github.com/zynexiz/zkribers
  * Description:			Allows your subscribers to get a notification by email on new posts.
  * Version:				v0.3 BETA
  * Requires at least:	5.2
@@ -10,7 +10,7 @@
  * Author URI:			https://github.com/zynexiz
  * License:				GPLv3
  * License URI:			http://www.gnu.org/licenses/gpl-3.0.txt
- * Text Domain:			es-email-subscribers
+ * Text Domain:			zkribers
  * Domain Path:			/lang/
  **/
 
@@ -18,37 +18,37 @@
 if ( ! defined( 'ABSPATH' ) ){ die; }
 
 // Define database version, change on database structure change
-if(!defined("ES_DB_VERSION")) define("ES_DB_VERSION", 2);
+if(!defined("ZKRIBERS_DB_VERSION")) define("ZKRIBERS_DB_VERSION", 2);
 
 // Activities for cron jobb
 require_once(dirname(__FILE__) . '/includes/send_mail.php');
 
 // Add plugin activation and deactivation hook
-register_activation_hook( __FILE__, 'es_activate' );
-register_deactivation_hook (__FILE__, 'es_deactivate');
+register_activation_hook( __FILE__, 'zkribers_activate' );
+register_deactivation_hook (__FILE__, 'zkribers_deactivate');
 
 // Define the widget
-add_action( 'widgets_init', 'es_load_widget' );
+add_action( 'widgets_init', 'zkribers_load_widget' );
 
 if (is_admin()) {
 	// Add plugin to Admin panel
 	require_once(dirname(__FILE__) . '/includes/admin-functions.php');
-	add_action('admin_menu', 'setup_es_admin_page');
+	add_action('admin_menu', 'setup_zkribers_admin_page');
 }
 
 /**
  * Initial setup when plugin is activated
  *
  */
-function es_activate() {
-	$opt = get_option('es_options');
+function zkribers_activate() {
+	$opt = get_option('zkribers_options');
 
 	if (!$opt) {
 
-		add_option( 'es_options', array(), false );
+		add_option( 'zkribers_options', array(), false );
 
 		$opt = array(
-			'es_db_version' => ES_DB_VERSION,
+			'zkribers_db_version' => ZKRIBERS_DB_VERSION,
 			'row_per_page' => 10,
 			'cron_schedule' => 60,
 			'post_type' => array('post','page'),
@@ -63,7 +63,7 @@ function es_activate() {
 			'email' => '',
 			'name' => ''
 		);
-		update_option( 'es_options', $opt);
+		update_option( 'zkribers_options', $opt);
 	}
 
 	// Import functions for dbDelta()
@@ -72,9 +72,9 @@ function es_activate() {
 	$charset_collate = $wpdb->get_charset_collate();
 
 	// Check is databases exist or table need updating
-	$table_name = $wpdb->prefix . "es_subscribers";
+	$table_name = $wpdb->prefix . "zkribers_subscribers";
 	$db_try = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name;
-	if($db_try || $opt['es_db_version'] != ES_DB_VERSION) {
+	if($db_try || $opt['zkribers_db_version'] != ZKRIBERS_DB_VERSION) {
 		$sql = "CREATE TABLE $table_name (
 				id tinyint NOT NULL AUTO_INCREMENT,
 				uuid tinytext NULL,
@@ -88,9 +88,9 @@ function es_activate() {
 		dbDelta( $sql );
 	}
 
-	$table_name = $wpdb->prefix . "es_templates";
+	$table_name = $wpdb->prefix . "zkribers_templates";
 	$db_try = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name;
-	if($db_try || $opt['es_db_version'] != ES_DB_VERSION) {
+	if($db_try || $opt['zkribers_db_version'] != ZKRIBERS_DB_VERSION) {
 		$sql = "CREATE TABLE $table_name (
 				id tinyint NOT NULL AUTO_INCREMENT,
 				slug char(10) NOT NULL,
@@ -148,13 +148,13 @@ function es_activate() {
 	}
 
 	// Update database version in option if changed
-	if ($opt['es_db_version'] != ES_DB_VERSION) {
-		$opt['es_db_version'] = ES_DB_VERSION;
-		update_option( 'es_options', $opt);
+	if ($opt['zkribers_db_version'] != ZKRIBERS_DB_VERSION) {
+		$opt['zkribers_db_version'] = ZKRIBERS_DB_VERSION;
+		update_option( 'zkribers_options', $opt);
 	}
 
-	if (! wp_next_scheduled ( 'es_cron_jobbs' )) {
-		wp_schedule_event(time(), 'hourly', 'es_cron_jobbs');
+	if (! wp_next_scheduled ( 'zkribers_cron_jobbs' )) {
+		wp_schedule_event(time(), 'hourly', 'zkribers_cron_jobbs');
     }
 }
 
@@ -163,10 +163,10 @@ function es_activate() {
  *
  */
 
-function es_deactivate() {
-	$timestamp = wp_next_scheduled( 'es_cron_jobbs' );
-	wp_unschedule_event( $timestamp, 'es_cron_jobbs' );
-	wp_clear_scheduled_hook('es_cron_jobbs');
+function zkribers_deactivate() {
+	$timestamp = wp_next_scheduled( 'zkribers_cron_jobbs' );
+	wp_unschedule_event( $timestamp, 'zkribers_cron_jobbs' );
+	wp_clear_scheduled_hook('zkribers_cron_jobbs');
 }
 
 /**
@@ -174,8 +174,8 @@ function es_deactivate() {
  *
  */
 
-function es_load_widget() {
-    register_widget( 'es_widget' );
+function zkribers_load_widget() {
+    register_widget( 'zkribers_widget' );
 }
 
 /**
@@ -183,13 +183,13 @@ function es_load_widget() {
  *
  */
 
-class es_widget extends WP_Widget {
+class zkribers_widget extends WP_Widget {
 
 	function __construct() {
 		parent::__construct(
 
 		// Widget base ID
-		'es_widget',
+		'zkribers_widget',
 
 		// Widget name will appear in UI
 		'Zkribers',
@@ -210,7 +210,7 @@ class es_widget extends WP_Widget {
 		echo $args['before_widget'];
 		if ( ! empty( $title ) ) { echo $args['before_title'] . $title . $args['after_title']; }
 
-		if (isset($_POST['es_submitmail'])) {
+		if (isset($_POST['zkribers_submitmail'])) {
 			submit_email();
 			echo '<div style="font-size: 0.9em; text-align: center; "><em>Thank you!<br>Your e-mail has been added.</em></div>';
 		} else {
@@ -218,9 +218,9 @@ class es_widget extends WP_Widget {
 				echo '<div style="font-size: 0.9em; text-align: center; "><em>'.$description.'</em></div>';
 				?>
 				<form method="post" style="margin-top: 15px;">
-					<input type="text" name="es_name" placeholder="Your name" required style="text-align: center; background: rgba(0,0,0,0.1); color: black; width: 100%; border: none; outline:none; height:50px;"><br>
-					<input type="email" name="es_email" placeholder="E-mail" required style="text-align: center; background: rgba(0,0,0,0.1); color: black; width: 100%; margin-top: 15px; margin-bottom: 15px; border: none; outline:none; height:50px;"><br>
-					<input type="submit" name="es_submitmail" value="<?php echo $submitbutton;?>" style="width: 100%; height:50px; background:white; border:0px none; text-size: 80%; border-radius: 0px; text-transform:uppercase; font-weight: bold;">
+					<input type="text" name="zkribers_name" placeholder="Your name" required style="text-align: center; background: rgba(0,0,0,0.1); color: black; width: 100%; border: none; outline:none; height:50px;"><br>
+					<input type="email" name="zkribers_email" placeholder="E-mail" required style="text-align: center; background: rgba(0,0,0,0.1); color: black; width: 100%; margin-top: 15px; margin-bottom: 15px; border: none; outline:none; height:50px;"><br>
+					<input type="submit" name="zkribers_submitmail" value="<?php echo $submitbutton;?>" style="width: 100%; height:50px; background:white; border:0px none; text-size: 80%; border-radius: 0px; text-transform:uppercase; font-weight: bold;">
 				</form>
 			<?php } }
 		echo $args['after_widget'];
@@ -260,12 +260,12 @@ class es_widget extends WP_Widget {
  */
 function submit_email() {
 	global $wpdb;
-	$sql = "SELECT active FROM {$wpdb->prefix}es_templates WHERE slug='VT'";
+	$sql = "SELECT active FROM {$wpdb->prefix}zkribers_templates WHERE slug='VT'";
 	$query = $wpdb->get_results($sql, 'ARRAY_A');
 	$verify = ($query[0]['active'] == 1) ? 'VT' : 'WT';
-	$table_name = $wpdb->prefix . 'es_subscribers';
-	$s_name = sanitize_text_field($_POST['es_name']);
-	$s_mail = sanitize_email($_POST['es_email']);
+	$table_name = $wpdb->prefix . 'zkribers_subscribers';
+	$s_name = sanitize_text_field($_POST['zkribers_name']);
+	$s_mail = sanitize_email($_POST['zkribers_email']);
 
 	$wpdb->insert( $table_name,
 		array(
@@ -276,5 +276,5 @@ function submit_email() {
 			'purge_date' => ($verify == 'WT') ? NULL : date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp')))),
 		array( '%s', '%s', '%s', '%d') );
 
-		es_sendmail( array(array('name' => $s_name, 'email' => $s_mail)), $verify);
+		zkribers_sendmail( array(array('name' => $s_name, 'email' => $s_mail)), $verify);
 }

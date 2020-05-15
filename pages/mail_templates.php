@@ -8,7 +8,7 @@ function mail_templates() {
 		$tid = verify_data( $_GET['id'], 'int');
 		switch ($_GET['action']) {
 			case 'active':
-				$table_name = $wpdb->prefix . 'es_templates';
+				$table_name = $wpdb->prefix . 'zkribers_templates';
 				$wpdb->update( $table_name,
 					array( 'active' => ($templates[$tid-1]['active'] == true ? false : true) ),
 					array( 'id' => $tid ),
@@ -16,9 +16,9 @@ function mail_templates() {
 				break;
 			case 'edit':
 				if (isset($_POST['save'])) {
-					$table_name = $wpdb->prefix . 'es_templates';
+					$table_name = $wpdb->prefix . 'zkribers_templates';
 					$wpdb->update( $table_name,
-						array( 'template' =>  base64_encode(stripslashes_deep($_POST['es_edit'])),
+						array( 'template' =>  base64_encode(stripslashes_deep($_POST['zkribers_edit'])),
 							   'subject' => base64_encode(stripslashes_deep($_POST['subject'])) ),
 						array( 'id' => $tid ),
 						array( '%s', '%s' ) );
@@ -31,9 +31,9 @@ function mail_templates() {
 					      E-mail subject <em style="font-size:80%;">(Subject support #sitename#
 					      '.(($templates[$tid-1]['slug'] == 'PT') ? ' and #newposts#' : '').' shortcode)</em><br>
 					      <input style="width:50%" type="text" value="'.$subject.'" name="subject" placeholder="Subject title for e-mail" required><br><br>
-					      <textarea name="es_edit" oncontextmenu="return false;">'.$data.'</textarea><br>
+					      <textarea name="zkribers_edit" oncontextmenu="return false;">'.$data.'</textarea><br>
 					      <p><input type="submit" name="save" class="button-primary" value="Save" />
-						  <a href="?page=es-settings&tab=mail_templates" class="button-primary">Cancel</a></p>
+						  <a href="?page=zkribers-settings&tab=mail_templates" class="button-primary">Cancel</a></p>
 						  </form>';
 					return;
 				}
@@ -78,7 +78,7 @@ class Templets_Table extends WP_List_Table {
 	public static function get_templets() {
 		global $wpdb;
 
-		$sql = "SELECT * FROM {$wpdb->prefix}es_templates";
+		$sql = "SELECT * FROM {$wpdb->prefix}zkribers_templates";
 		return $wpdb->get_results($sql, 'ARRAY_A');
 	}
 
@@ -99,8 +99,8 @@ class Templets_Table extends WP_List_Table {
 		$tab = verify_data($_GET['tab'], 'tabs');
 		$tid = verify_data($item['id'], 'int');
 		$action = '
-			<div style="float: right; padding-left: 15px;"><a href="?page=es-settings&tab='.$tab.'&id='.$tid.'&action=edit" class="button-primary">Edit template</a></div>
-			<div style="float: right; padding-left: 10px;"><a href="?page=es-settings&tab='.$tab.'&id='.$tid.'&action=active" class="button-primary">'.$active.'</a></div>
+			<div style="float: right; padding-left: 15px;"><a href="?page=zkribers-settings&tab='.$tab.'&id='.$tid.'&action=edit" class="button-primary">Edit template</a></div>
+			<div style="float: right; padding-left: 10px;"><a href="?page=zkribers-settings&tab='.$tab.'&id='.$tid.'&action=active" class="button-primary">'.$active.'</a></div>
 		';
 		return $action;
 	}

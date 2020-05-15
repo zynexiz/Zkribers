@@ -1,7 +1,7 @@
 <?php
 function smtp_options() {
 	global $phpmailer;
-	$opt = get_option('es_options');
+	$opt = get_option('zkribers_options');
 
 	if (!empty($_POST)) {
 		if (isset($_POST['save'])) {
@@ -25,7 +25,7 @@ function smtp_options() {
 			if (verify_data($_POST['login'], 'email', false)) {$opt['login'] = $_POST['login'];} else { $error_log.= '‣ Authentication login must be a valid e-mail.<br>';}
 			$opt['pwd'] = base64_encode($_POST['pwd']);
 			if (!$error_log) {
-				update_option( 'es_options', $opt);
+				update_option( 'zkribers_options', $opt);
 				show_infobox('Information updated.', 'Test your connection by clicking \'Send test mail\'.', '#3D9644');
 			} else {
 				show_infobox('There seems to be a problem.', $error_log, '#F98A89');

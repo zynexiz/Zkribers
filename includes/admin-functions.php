@@ -3,21 +3,21 @@
  * Initialize everything for admin interface
  *
  */
-function setup_es_admin_page() {
-	$es_page = add_options_page(
+function setup_zkribers_admin_page() {
+	$zkribers_page = add_options_page(
 		'Subsribers', // Page title
 		'Subsribers', // Menu text
 		'manage_options', // Capability requirement to see the link
-		'es-settings', // Slug
-		'es_contents' // Call function to show the content
+		'zkribers-settings', // Slug
+		'zkribers_contents' // Call function to show the content
 	);
 	if ( ! class_exists( 'WP_List_Table' ) ) {
 		require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 	}
 
-	wp_enqueue_script('es_tinymce', plugin_dir_url(__FILE__) . 'tinymce/tinymce.min.js'); // Add TinyMCE
-	add_action('load-'.$es_page, 'es_help_tab'); // Add help tab
-	add_filter( "plugin_action_links_" . plugin_basename(__FILE__), 'es_add_settings_link' ); // Add quick link from plugin addons page
+	wp_enqueue_script('zkribers_tinymce', plugin_dir_url(__FILE__) . 'tinymce/tinymce.min.js'); // Add TinyMCE
+	add_action('load-'.$zkribers_page, 'zkribers_help_tab'); // Add help tab
+	add_filter( "plugin_action_links_" . plugin_basename(__FILE__), 'zkribers_add_settings_link' ); // Add quick link from plugin addons page
 }
 
 /**
@@ -25,19 +25,19 @@ function setup_es_admin_page() {
  *
  */
 
-function es_contents() {
+function zkribers_contents() {
 	// Create a header in the default WordPress 'wrap' container
 	echo '<div class="wrap">
 		  <div id="icon-themes" class="icon32"></div>
 		  <h2>Zkribers</h2>';
 
 	// Create the tabs and show content
-	$ES_DIR = dirname(__FILE__,2);
+	$ZKRIBERS_DIR = dirname(__FILE__,2);
 	$page = isset($_GET[ 'tab' ]) ? verify_data($_GET[ 'tab' ], 'tabs') : 'subscribers';
-	require_once($ES_DIR . '/pages/subscribers.php');
-	require_once($ES_DIR . '/pages/mail_templates.php');
-	require_once($ES_DIR . '/pages/smtp_options.php');
-	require_once($ES_DIR . '/pages/options.php');
+	require_once($ZKRIBERS_DIR . '/pages/subscribers.php');
+	require_once($ZKRIBERS_DIR . '/pages/mail_templates.php');
+	require_once($ZKRIBERS_DIR . '/pages/smtp_options.php');
+	require_once($ZKRIBERS_DIR . '/pages/options.php');
 
 	// Define the tabs
 	$tabs = array(	'subscribers' => 'Subscribers',
@@ -49,7 +49,7 @@ function es_contents() {
 	echo '<h2 class="nav-tab-wrapper">';
 	foreach( $tabs as $tab => $name ){
 		$class = ( $tab == $page ) ? 'nav-tab-active' : '';
-		 echo "<a class='nav-tab $class' href='?page=es-settings&tab=$tab'>$name</a>";
+		 echo "<a class='nav-tab $class' href='?page=zkribers-settings&tab=$tab'>$name</a>";
 	}
 	echo '</h2>';
 
@@ -61,13 +61,13 @@ function es_contents() {
  * Define the help drop down menu
  *
  */
-function es_help_tab() {
+function zkribers_help_tab() {
 	/* Get current screen */
 	$screen = get_current_screen();
 
 	/* Add tabs to help section */
    $screen->add_help_tab( array(
-        'id'		=> 'es_help_subscibers',
+        'id'		=> 'zkribers_help_subscibers',
         'title'		=> __('Subscribers'),
         'content'	=> "<p><strong>Subscribers page</strong></p>
 						Here you manage you subscribers. Users that have registered will show up here. You can also add subscribers manually here.<br>
@@ -76,7 +76,7 @@ function es_help_tab() {
     ) );
 
    $screen->add_help_tab( array(
-        'id'		=> 'es_help_templates',
+        'id'		=> 'zkribers_help_templates',
         'title'		=> __('Templates'),
         'content'	=> "<p><strong>Templates page</strong></p>
 						Here you can modify you templates look. The templates support HTML-styles so you can design your templates look and feel to your liking.
@@ -86,7 +86,7 @@ function es_help_tab() {
     ) );
 
     $screen->add_help_tab( array(
-        'id'		=> 'es_help_smtp',
+        'id'		=> 'zkribers_help_smtp',
         'title'		=> __('SMTP options'),
         'content'	=> "<p><strong>Send options page</strong></p>
 						Here you set up various options required to send out your e-mails. Note that you must have access to a SMTP server in order to use this plugin.
@@ -95,7 +95,7 @@ function es_help_tab() {
     ) );
 
     $screen->add_help_tab( array(
-        'id'		=> 'es_help_options',
+        'id'		=> 'zkribers_help_options',
         'title'		=> __('Options'),
         'content'	=> "<p><strong>Options page</strong></p>
 						Gerenall options for Zkribers. You can set the number of rows to be shown in subscriber table list and select which post types you want to include when sending out e-mails.
@@ -103,7 +103,7 @@ function es_help_tab() {
     ) );
 
     $screen->add_help_tab( array(
-        'id'		=> 'es_help_about',
+        'id'		=> 'zkribers_help_about',
         'title'		=> __('About'),
         'content'	=> "<p><strong>About</strong></p>Zkribers is a simple addon for Wordpress to manage e-mail subscriptions, and setup automatic e-mail notification for new posts.
 						The plugin only support two-step verification if activated and standard SMTP servers. Third party e-mail services like Mailchimp is not supported.<br><br>
@@ -121,8 +121,8 @@ function es_help_tab() {
  * @param string $link
  */
 
-function es_add_settings_link( $link ) {
-    $settings_link = '<a href="options-general.php?page=es-settings">' . __( 'Settings' ) . '</a>';
+function zkribers_add_settings_link( $link ) {
+    $settings_link = '<a href="options-general.php?page=zkribers-settings">' . __( 'Settings' ) . '</a>';
     array_push( $link, $settings_link );
   	return $link;
 }
@@ -134,7 +134,7 @@ function es_add_settings_link( $link ) {
  */
 
 function redirect( $option = '') {
-	$location = admin_url('options-general.php?page=es-settings'.$option);
+	$location = admin_url('options-general.php?page=zkribers-settings'.$option);
 	echo '<p>Please wait, redirecting..</p>';
 	echo "<meta http-equiv='refresh' content='0;url=$location' />";
 	exit;

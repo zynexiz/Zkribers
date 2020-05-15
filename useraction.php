@@ -10,7 +10,7 @@ require_once( dirname(__FILE__) . '/includes/send_mail.php' );
 
 // Check if the given UUID is still valid for the user
 global $wpdb;
-$sql = "SELECT * FROM {$wpdb->prefix}es_subscribers WHERE uuid='$uuid'";
+$sql = "SELECT * FROM {$wpdb->prefix}zkribers_subscribers WHERE uuid='$uuid'";
 $subscriber = $wpdb->get_results($sql, 'ARRAY_A');
 
 !empty($subscriber) or die('UUID has expired');
@@ -18,15 +18,15 @@ $subscriber = $wpdb->get_results($sql, 'ARRAY_A');
 if ($_GET['a']  == 'verify') {
 	// Verify the subscriber and send verify e-mail if activated
 	$subscriber = $subscriber[0];
-	$sql = "UPDATE {$wpdb->prefix}es_subscribers SET verified = 2, purge_date = NULL WHERE uuid='$uuid'";
+	$sql = "UPDATE {$wpdb->prefix}zkribers_subscribers SET verified = 2, purge_date = NULL WHERE uuid='$uuid'";
 	$query = $wpdb->get_results($sql, 'ARRAY_A');
-	es_sendmail( array(array('name' => $subscriber['name'], 'email' => $subscriber['email'])), 'WT');
+	zkribers_sendmail( array(array('name' => $subscriber['name'], 'email' => $subscriber['email'])), 'WT');
 	echo  $subscriber['email'] .  ' verified';
 } else if ($_GET['a']  == 'unsubscribe') {
 	// Delete the subscriber and send unsubscribe e-mail if activated
 	$subscriber = $subscriber[0];
-	$wpdb->delete("{$wpdb->prefix}es_subscribers", ['uuid' => $uuid] );
-	es_sendmail( array(array('name' => $subscriber['name'], 'email' => $subscriber['email'])), 'US');
+	$wpdb->delete("{$wpdb->prefix}zkribers_subscribers", ['uuid' => $uuid] );
+	zkribers_sendmail( array(array('name' => $subscriber['name'], 'email' => $subscriber['email'])), 'US');
 	echo  $subscriber['email'] .  ' unsubscribed from mail list';
 } else {
 	echo 'Not a valid action.';

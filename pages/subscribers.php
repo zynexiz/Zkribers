@@ -11,8 +11,8 @@ function subscribers() {
 				return;
 			} else {
 				save_post( $uid );
-				if (!isset($_POST['verified'])) { es_sendmail( array(array('name' => $s_name, 'email' => $s_email)), 'VT'); }
-				if (isset($_POST['send_welcome'])) { es_sendmail( array(array('name' => $s_name, 'email' => $s_email)), 'WT'); }
+				if (!isset($_POST['verified'])) { zkribers_sendmail( array(array('name' => $s_name, 'email' => $s_email)), 'VT'); }
+				if (isset($_POST['send_welcome'])) { zkribers_sendmail( array(array('name' => $s_name, 'email' => $s_email)), 'WT'); }
 				redirect( '&tab=subscribers&paged='.(is_numeric($_GET['paged']) ? $_GET['paged'] : '1') );
 			}
 		} else {
@@ -25,7 +25,7 @@ function subscribers() {
 	$table_obj = new Subscribers_Table();
 	$table_obj->prepare_items();
 	$table_obj->display();
-	echo '<p style="clear: both;"><div style="float:left;"><a href="?page=es-settings&action=adduser&paged=' . $table_obj->current_page(). '" class="button-primary">Add user</a></div>';
+	echo '<p style="clear: both;"><div style="float:left;"><a href="?page=zkribers-settings&action=adduser&paged=' . $table_obj->current_page(). '" class="button-primary">Add user</a></div>';
 	echo '<div style="float:right;"><span style="color: green;font-size:3rem;vertical-align: middle;">&bull;&nbsp</span><em style="vertical-align: middle;">Verified</em>
 	<span style="color: yellow; padding-left: 10px;font-size:3rem;vertical-align: middle;">&bull;&nbsp</span><em style="vertical-align: middle;">Waiting for verification</em>
 	<span style="color: red; padding-left: 10px;font-size:3rem;vertical-align: middle;">&bull;&nbsp</span><em style="vertical-align: middle;">Disabled</em></div></p></form>';
@@ -39,7 +39,7 @@ function subscribers() {
 function post_form ( $userID = NULL) {
 	if ( $userID ) {
 		global $wpdb;
-		$user = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}es_subscribers WHERE id = {$userID}", 'ARRAY_A' );
+		$user = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}zkribers_subscribers WHERE id = {$userID}", 'ARRAY_A' );
 	} else {
 		$user = array('name' => '','email' => '', 'verified' => 0);
 	} ?>
@@ -70,7 +70,7 @@ function post_form ( $userID = NULL) {
 			<tr colspan="2">
 				<td style="height: 50px;">
 					<p><input type="submit" name="save" class="button-primary" value="Save" />
-					<a href="?page=es-settings&tab=subscribers" class="button-primary">Cancel</a></p>
+					<a href="?page=zkribers-settings&tab=subscribers" class="button-primary">Cancel</a></p>
 				</td>
 			</tr>
 		</table>
@@ -84,7 +84,7 @@ function post_form ( $userID = NULL) {
  */
 function save_post( $userID = NULL ) {
 	global $wpdb;
-	$table_name = $wpdb->prefix . 'es_subscribers';
+	$table_name = $wpdb->prefix . 'zkribers_subscribers';
 
 	$s_name = verify_data($_POST['name'], 'name');
 	$s_email = verify_data($_POST['email'] , 'email');
@@ -140,7 +140,7 @@ class Subscribers_Table extends WP_List_Table {
 		$orderby = empty($_GET['orderby']) ? 'name' : verify_data($_GET['orderby'], 'order');
 		$order = empty($_GET['order']) ? 'asc' : verify_data($_GET['order'], 'order');
 
-		$sql = "SELECT * FROM {$wpdb->prefix}es_subscribers";
+		$sql = "SELECT * FROM {$wpdb->prefix}zkribers_subscribers";
 		$sql .= ' ORDER BY ' . $orderby . ' ' . $order;
 		$sql .= ' LIMIT ' . $per_page;
 		$sql .= ' OFFSET ' . ($page_number -1) * $per_page;
@@ -157,7 +157,7 @@ class Subscribers_Table extends WP_List_Table {
 		global $wpdb;
 
 		$wpdb->delete(
-			"{$wpdb->prefix}es_subscribers",
+			"{$wpdb->prefix}zkribers_subscribers",
 			['id' => verify_data($id, 'int')],
 			['%d']
 		);
@@ -172,7 +172,7 @@ class Subscribers_Table extends WP_List_Table {
 
 	static function verify_subscriber ( $id , $v) {
 		global $wpdb;
-		$sql = "UPDATE {$wpdb->prefix}es_subscribers SET verified = $v, purge_date = NULL WHERE id=".verify_data($id, 'int');
+		$sql = "UPDATE {$wpdb->prefix}zkribers_subscribers SET verified = $v, purge_date = NULL WHERE id=".verify_data($id, 'int');
 		$query = $wpdb->get_results($sql, 'ARRAY_A');
 	}
 
@@ -186,15 +186,15 @@ class Subscribers_Table extends WP_List_Table {
 	static function resendverify ( $id ) {
 		$id = verify_data($id, 'int');
 		global $wpdb;
-		$sql = "SELECT * FROM {$wpdb->prefix}es_subscribers WHERE id IN ($id)";
+		$sql = "SELECT * FROM {$wpdb->prefix}zkribers_subscribers WHERE id IN ($id)";
 		$query = $wpdb->get_results($sql, 'ARRAY_A');
 
 		foreach ($query as $subscriber) {
 			$to[] = array('name' => $subscriber['name'], 'email' => $subscriber['email']);
 		}
 
-		es_sendmail($to , 'VT');
-		$sql = "UPDATE {$wpdb->prefix}es_subscribers SET verified = 1, purge_date = '".date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp')))."' WHERE id IN ($id)";
+		zkribers_sendmail($to , 'VT');
+		$sql = "UPDATE {$wpdb->prefix}zkribers_subscribers SET verified = 1, purge_date = '".date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp')))."' WHERE id IN ($id)";
 		$query = $wpdb->get_results($sql, 'ARRAY_A');	}
 
 /**
@@ -205,7 +205,7 @@ class Subscribers_Table extends WP_List_Table {
 
 	static function record_count() {
 		global $wpdb;
-		$sql = "SELECT COUNT(*) FROM {$wpdb->prefix}es_subscribers";
+		$sql = "SELECT COUNT(*) FROM {$wpdb->prefix}zkribers_subscribers";
 		return $wpdb->get_var( $sql );
 	}
 
@@ -389,7 +389,7 @@ class Subscribers_Table extends WP_List_Table {
 		echo '.wp-list-table .column-time { width: 160px; }';
 		echo '</style>';
 
-		$opt = get_option('es_options');
+		$opt = get_option('zkribers_options');
 		$columns  = $this->get_columns();
 		$hidden   = array();
 		$sortable = $this->get_sortable_columns();
