@@ -29,7 +29,7 @@ function es_contents() {
 	// Create a header in the default WordPress 'wrap' container
 	echo '<div class="wrap">
 		  <div id="icon-themes" class="icon32"></div>
-		  <h2>E-mail subscribers for SMTP</h2>';
+		  <h2>Zkribers</h2>';
 
 	// Create the tabs and show content
 	$ES_DIR = dirname(__FILE__,2);
@@ -98,14 +98,14 @@ function es_help_tab() {
         'id'		=> 'es_help_options',
         'title'		=> __('Options'),
         'content'	=> "<p><strong>Options page</strong></p>
-						Gerenall options for E-mail subscriber. You can set the number of rows to be shown in subscriber table list and select which post types you want to include when sending out e-mails.
+						Gerenall options for Zkribers. You can set the number of rows to be shown in subscriber table list and select which post types you want to include when sending out e-mails.
 						The WordPress default post types are posts and pages, but this plugin also support custom post types. All supported post types should be shown in the list.",
     ) );
 
     $screen->add_help_tab( array(
         'id'		=> 'es_help_about',
         'title'		=> __('About'),
-        'content'	=> "<p><strong>About</strong></p>E-mail subscribers is a simple addon for Wordpress to manage e-mail subscriptions, and setup automatic e-mail notification for new posts.
+        'content'	=> "<p><strong>About</strong></p>Zkribers is a simple addon for Wordpress to manage e-mail subscriptions, and setup automatic e-mail notification for new posts.
 						The plugin only support two-step verification if activated and standard SMTP servers. Third party e-mail services like Mailchimp is not supported.<br><br>
 						This plugin is released under GPLv3 and is free to use and modify. For bug reports and more info please visit GitHub.
 						To support the development, consider to subscribe or donate on <a href='https://liberapay.com/zynex'>Liberapay</a> or <a href='https://www.paypal.com/pools/c/8ldXVJfKHq'>Paypal</a>.",

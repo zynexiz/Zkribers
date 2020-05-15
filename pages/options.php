@@ -13,8 +13,8 @@ function options() {
 	$post_types = array_merge(array('post' => 'post', 'page' => 'page'), get_post_types( array('public'   => true, '_builtin' => false) ));
 
 ?>
-	<h2>E-mail subscriber options</h2>
-	<em>Gerenall options for E-mail subscriber. Set the number of rows in subscriber table and select which post types you want to include when sending out e-mails.</em>
+	<h2>Zkriber options</h2>
+	<em>Gerenall options for Zkribers. Set the number of rows in subscriber table and select which post types you want to include when sending out e-mails.</em>
 	<form method="post">
 		<table class="form-table">
 			<tr>

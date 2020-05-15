@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name:			E-mail subscribers for SMTP
+ * Plugin Name:			Zkribers
  * Plugin URI:			https://github.com/zynexiz/email-subscribers
  * Description:			Allows your subscribers to get a notification by email on new posts.
  * Version:				v0.3 BETA
@@ -192,7 +192,7 @@ class es_widget extends WP_Widget {
 		'es_widget',
 
 		// Widget name will appear in UI
-		'E-mail subscribers',
+		'Zkribers',
 
 		// Widget description
 		array( 'description' => 'Widget to let users subscribe to you posts' )
