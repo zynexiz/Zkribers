@@ -43,12 +43,12 @@ function mail_templates() {
 				break;
 		}
 	}
-	echo '<h2>Manage and edit e-mail templates</h2>';
+	echo '<h2>E-mail templates</h2>';
 	$table_obj->prepare_items();
 	$table_obj->display();
 	echo '<div style="float:right;">
-	<span style="color: green;">&#11044;&nbsp</span><em>Templete active</em>
-	<span style="color: red; padding-left: 10px;">&#11044;&nbsp</span><em>Templete deactivated</em></div>';
+	<span style="color: green;font-size:3rem;vertical-align: middle;">&bull;&nbsp</span><em style="vertical-align: middle;">Templete active</em>&nbsp&nbsp&nbsp
+	<span style="color: red;font-size:3rem;vertical-align: middle;">&bull;&nbsp</span><em style="vertical-align: middle;">Templete deactivated</em></div>';
 }
 
 /**
@@ -91,7 +91,7 @@ class Templets_Table extends WP_List_Table {
 * @return string
 */
 	function column_active ( $item ) {
-		return ($item['active']) ? '<span style="color: green;">&#11044;</span>' : '<span style="color: red;">&#11044;</span>' ;
+		return ($item['active']) ? '<span style="color: green;font-size:3rem;vertical-align: middle;">&bull;</span>' : '<span style="color: red;font-size:3rem;vertical-align: middle;">&bull;</span>' ;
 	}
 
 	function column_modify( $item ) {
@@ -106,7 +106,7 @@ class Templets_Table extends WP_List_Table {
 	}
 
 	function column_default( $item, $column_name ) {
-		return $item[ $column_name ];
+		return '<span style="vertical-align: middle;">'.$item[ $column_name ].'</span>';
 	}
 
 /**

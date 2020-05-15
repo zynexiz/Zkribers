@@ -1,3 +1,6 @@
+### Version 0.4 BETA (IN PROGRESS)
+- Fixed font error for status
+
 ### Version 0.3 BETA
 - Fixed subject bug on new installations
 - Rename project to avoide collision with another WP plugin

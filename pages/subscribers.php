@@ -26,9 +26,9 @@ function subscribers() {
 	$table_obj->prepare_items();
 	$table_obj->display();
 	echo '<p style="clear: both;"><div style="float:left;"><a href="?page=es-settings&action=adduser&paged=' . $table_obj->current_page(). '" class="button-primary">Add user</a></div>';
-	echo '<div style="float:right;"><span style="color: green;">&#11044;&nbsp</span><em>Verified</em>
-	<span style="color: yellow; padding-left: 10px;">&#11044;&nbsp</span><em>Waiting for verification</em>
-	<span style="color: red; padding-left: 10px;">&#11044;&nbsp</span><em>Disabled</em></div></p></form>';
+	echo '<div style="float:right;"><span style="color: green;font-size:3rem;vertical-align: middle;">&bull;&nbsp</span><em style="vertical-align: middle;">Verified</em>
+	<span style="color: yellow; padding-left: 10px;font-size:3rem;vertical-align: middle;">&bull;&nbsp</span><em style="vertical-align: middle;">Waiting for verification</em>
+	<span style="color: red; padding-left: 10px;font-size:3rem;vertical-align: middle;">&bull;&nbsp</span><em style="vertical-align: middle;">Disabled</em></div></p></form>';
 }
 
 /**
@@ -241,13 +241,13 @@ class Subscribers_Table extends WP_List_Table {
 		$verified = $item['verified'];
 		switch ($verified) {
 			case 0:
-				$verified = '<span style="color: red;">&#11044;</span>';
+				$verified = '<span style="color: red;font-size:3rem;vertical-align: middle;">&bull;</span>';
 				break;
 			case 1:
-				$verified = '<span title="Expire at '.$item['purge_date'].'" style="color: yellow; cursor: help;">&#11044;</span>';
+				$verified = '<span title="Expire at '.$item['purge_date'].'" style="color: yellow; cursor: help;font-size:3rem;vertical-align: middle;">&bull;</span>';
 				break;
 			case 2:
-				$verified = '<span style="color: green;">&#11044;</span>';
+				$verified = '<span style="color: green;font-size:3rem;vertical-align: middle;">&bull;</span>';
 				break;
 		}
 		return $verified;
