@@ -1,5 +1,6 @@
 ### Version 0.4 BETA (IN PROGRESS)
 - Fixed font error for status
+- Added support for BBCode in widget
 
 ### Version 0.3 BETA
 - Fixed subject bug on new installations

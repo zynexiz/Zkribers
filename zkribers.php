@@ -214,15 +214,14 @@ class zkribers_widget extends WP_Widget {
 			submit_email();
 			echo '<div style="font-size: 0.9em; text-align: center; "><em>Thank you!<br>Your e-mail has been added.</em></div>';
 		} else {
-			if ( ! empty( $title ) ) {
-				echo '<div style="font-size: 0.9em; text-align: center; "><em>'.$description.'</em></div>';
-				?>
-				<form method="post" style="margin-top: 15px;">
-					<input type="text" name="zkribers_name" placeholder="Your name" required style="text-align: center; background: rgba(0,0,0,0.1); color: black; width: 100%; border: none; outline:none; height:50px;"><br>
-					<input type="email" name="zkribers_email" placeholder="E-mail" required style="text-align: center; background: rgba(0,0,0,0.1); color: black; width: 100%; margin-top: 15px; margin-bottom: 15px; border: none; outline:none; height:50px;"><br>
-					<input type="submit" name="zkribers_submitmail" value="<?php echo $submitbutton;?>" style="width: 100%; height:50px; background:white; border:0px none; text-size: 80%; border-radius: 0px; text-transform:uppercase; font-weight: bold;">
-				</form>
-			<?php } }
+			require_once('includes/bbcode.php');
+			echo '<div style="text-align: center; ">'.bbcode2html($description).'</div>'; ?>
+			<form method="post" style="margin-top: 15px;">
+				<input type="text" name="zkribers_name" placeholder="Your name" required style="text-align: center; background: rgba(0,0,0,0.1); color: black; width: 100%; border: none; outline:none; height:50px;"><br>
+				<input type="email" name="zkribers_email" placeholder="E-mail" required style="text-align: center; background: rgba(0,0,0,0.1); color: black; width: 100%; margin-top: 10px; margin-bottom: 10px; border: none; outline:none; height:50px;"><br>
+				<input type="submit" name="zkribers_submitmail" value="<?php echo $submitbutton;?>" style="width: 100%; height:50px; border:0px none; font-size: 90%; border-radius: 0px; text-transform:uppercase; font-weight: bold;">
+			</form>
+			<?php }
 		echo $args['after_widget'];
 	}
 
