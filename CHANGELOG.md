@@ -1,5 +1,6 @@
 ### Version 0.4 BETA (IN PROGRESS)
 - Fixed font error for status
+- Fixed bug for user status when registered
 - Added support for BBCode in widget
 
 ### Version 0.3 BETA
