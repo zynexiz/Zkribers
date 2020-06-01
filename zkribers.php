@@ -271,7 +271,7 @@ function submit_email() {
 			'name' => $s_name,
 			'email' => $s_mail,
 			'time' => current_time( 'mysql' ),
-			'verified' => $verify,
+			'verified' => ($verify=='WT') ? 2 : 1,
 			'purge_date' => ($verify == 'WT') ? NULL : date('Y-m-d H:i:s',strtotime("+1 week", current_time('timestamp')))),
 		array( '%s', '%s', '%s', '%d') );
 
