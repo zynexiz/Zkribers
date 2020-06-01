@@ -4,7 +4,7 @@
 	BBCode to HTML conversion for PHP
 
 	Michael Rydén <zynex@zoik.se>
-	https://github.com/zynexiz
+	https://github.com/zynexiz/bbcode2html
 
 	This is public domain software. Anyone is free to copy, modify, publish,
 	use, compile, sell, or distribute this software, either in source code
@@ -44,18 +44,9 @@ class BBCode {
 
 	const BBCode=array(
 		'i'=>		array('start_tag'=>'<i>', 'end_tag'=>'</i>'),
-		'url'=>		array('start_tag'=>'<a href="{PARAM}">', 'end_tag'=>'</a>'),
-		'img'=>		array('start_tag'=>'<img src="{PARAM}" {ARG} />', 'arg'=>'width={ARG},height={ARG}'),
 		'b'=>		array('start_tag'=>'<b>','end_tag'=>'</b>'),
 		'br'=>		array('start_tag' => '<br>'),
 		'font'=>	array('start_tag'=>'<span style="{ARG}">', 'end_tag'=>'</span>', 'arg'=>'color:{ARG};,size:{ARG};'),
-		'ul'=>		array('start_tag'=>'<ul>' , 'end_tag'=>'</ul>'),
-		'ol'=>		array('start_tag'=>'<ol>' , 'end_tag'=>'</ol>'),
-		'li'=>		array('start_tag'=>'<li>', 'end_tag'=>'</li>', 'parent'=>'ul,ol'),
-		'table'=>	array('start_tag'=>'<table style="{ARG}">', 'end_tag'=>'</table>', 'arg'=>'color:{ARG};,width:{ARG};,bcolor:{ARG};'),
-		'tr'=>		array('start_tag'=>'<tr>', 'end_tag'=>'</tr>', 'parent'=>'table'),
-		'td'=>		array('start_tag'=>'<td>', 'end_tag'=>'</td>', 'parent'=>'tr'),
-		'th'=>		array('start_tag'=>'<th>', 'end_tag'=>'</th>', 'parent'=>'tr'),
 	);
 
 
